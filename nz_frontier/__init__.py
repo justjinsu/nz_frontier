@@ -1,0 +1,22 @@
+try:
+    from .types import Technology, Portfolio
+    from .risk import RiskModel
+    from .optimizer import OptimizationEngine
+    from .simulation import CostSimulator
+    from .frontier import EfficientFrontier
+    from .dynamic import DynamicOptimizer
+except ImportError as e:
+    print(f"Error importing nz_frontier components: {e}")
+    print("Please ensure all dependencies are installed: pip install -r requirements.txt")
+    # Re-raise to prevent broken usage, but user sees the message first
+    raise
+
+__all__ = [
+    "Technology",
+    "Portfolio",
+    "RiskModel",
+    "OptimizationEngine",
+    "CostSimulator",
+    "EfficientFrontier",
+    "DynamicOptimizer",
+]
