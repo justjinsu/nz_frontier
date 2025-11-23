@@ -92,8 +92,8 @@ if df is not None:
                     results = frontier.compute(abatement_target_min, abatement_target_max, n_points=20, budget_constraint=budget_constraint)
                     
                     # Plotting
-                    risks = [r[0] for r in results]
-                    abatements = [r[1] for r in results]
+                    risks = [p.risk for p in results]
+                    abatements = [p.abatement for p in results]
                     
                     fig, ax = plt.subplots(figsize=(10, 6))
                     ax.plot(abatements, risks, 'o-', linewidth=2, markersize=8, color='#2E86C1')
@@ -109,7 +109,7 @@ if df is not None:
                     
                     # Find closest result
                     idx = np.argmin(np.abs(np.array(abatements) - target_select))
-                    selected_portfolio = results[idx][2]
+                    selected_portfolio = results[idx].portfolio
                     
                     fig2, ax2 = plt.subplots()
                     weights = selected_portfolio.weights

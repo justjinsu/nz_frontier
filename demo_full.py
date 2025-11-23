@@ -23,8 +23,8 @@ def run_demo():
     results = frontier.compute(abatement_min=10, abatement_max=50, n_points=10, budget_constraint=1000)
     
     print(f"   Computed {len(results)} frontier points.")
-    print(f"   Min Risk: {results[0][0]:.4f} at Abatement {results[0][1]:.1f}")
-    print(f"   Max Risk: {results[-1][0]:.4f} at Abatement {results[-1][1]:.1f}")
+    print(f"   Min Risk: {results[0].risk:.4f} at Abatement {results[0].abatement:.1f}")
+    print(f"   Max Risk: {results[-1].risk:.4f} at Abatement {results[-1].abatement:.1f}")
     
     # 3. Dynamic Optimization
     print("\n3. Running Dynamic Optimization (10 periods)...")

@@ -47,8 +47,8 @@ def run_projection(case_name, csv_path):
         
     results = frontier.compute(min_target, max_target, n_points=20, budget_constraint=budget)
     
-    risks = [r[0] for r in results]
-    abatements = [r[1] for r in results]
+    risks = [p.risk for p in results]
+    abatements = [p.abatement for p in results]
     
     plt.figure(figsize=(10, 6))
     plt.plot(abatements, risks, 'o-', linewidth=2, color='#2E86C1')

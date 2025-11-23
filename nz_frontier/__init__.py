@@ -1,5 +1,5 @@
 try:
-    from .types import Technology, Portfolio
+    from .types import Technology, Portfolio, RiskBreakdown, FrontierPoint
     from .risk import RiskModel
     from .optimizer import OptimizationEngine
     from .simulation import CostSimulator
@@ -19,4 +19,6 @@ __all__ = [
     "CostSimulator",
     "EfficientFrontier",
     "DynamicOptimizer",
+    "RiskBreakdown",
+    "FrontierPoint",
 ]

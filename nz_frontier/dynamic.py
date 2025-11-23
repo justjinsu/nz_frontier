@@ -14,7 +14,9 @@ class DynamicOptimizer:
     def solve_bellman(self, 
                       T_periods: int, 
                       target_abatement_path: List[float], 
-                      budget_per_period: float) -> List[Portfolio]:
+                      budget_per_period: float,
+                      lambda_param: float = None,
+                      gamma_param: float = None) -> List[Portfolio]:
         """
         Solves the multi-period optimization problem using Backward Induction on a discretized grid.
         
@@ -38,6 +40,9 @@ class DynamicOptimizer:
         then implement w_t.
         
         Let's implement MPC with horizon k=3 (or T-t if smaller).
+        Args:
+            lambda_param: Weight on stranded asset risk (λ in Equation (4))
+            gamma_param: Weight on option value (γ in Equation (4))
         """
         from scipy.optimize import minimize
         
@@ -104,7 +109,7 @@ class DynamicOptimizer:
                 total_val = 0.0
                 for k in range(H):
                     w_k = x[k*n_tech : (k+1)*n_tech]
-                    risk = self.risk_model.total_risk(w_k)
+                    risk = self.risk_model.total_risk(w_k, lambda_param=lambda_param, gamma_param=gamma_param)
                     total_val += (self.beta ** k) * risk
                 return total_val
             

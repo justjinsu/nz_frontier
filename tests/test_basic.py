@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from nz_frontier import Technology, Portfolio, RiskModel, OptimizationEngine
+from nz_frontier import Technology, Portfolio, RiskModel, OptimizationEngine, EfficientFrontier, FrontierPoint
 
 class TestNZFrontier(unittest.TestCase):
     def setUp(self):
@@ -22,6 +22,30 @@ class TestNZFrontier(unittest.TestCase):
         target_abatement = 1.5
         portfolio = self.optimizer.solve_for_target(target_abatement)
         self.assertGreaterEqual(portfolio.total_abatement, target_abatement - 1e-6)
+
+    def test_risk_breakdown(self):
+        tech = Technology(
+            name="Test Tech",
+            a=1.0,
+            c=10.0,
+            sigma=0.1,
+            tau=4.0,
+            failure_prob=0.1,
+            loss_given_failure=50.0,
+            o=5.0,
+        )
+        rm = RiskModel([tech], np.array([[0.01]]))
+        breakdown = rm.breakdown(np.array([1.0]))
+
+        self.assertAlmostEqual(breakdown.cost_volatility, 0.01)
+        self.assertAlmostEqual(breakdown.stranded_asset, 5.2)  # 0.1*50 + 0.1*sqrt(4)
+        self.assertAlmostEqual(breakdown.option_value, 5.0)
+        self.assertAlmostEqual(breakdown.total, 0.21)
+
+    def test_frontier_returns_dataclass(self):
+        frontier = EfficientFrontier(self.technologies, self.cov_matrix)
+        results = frontier.compute(abatement_min=0.5, abatement_max=2.0, n_points=3)
+        self.assertIsInstance(results[0], FrontierPoint)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,15 +1,30 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import List, Tuple
-from .types import Portfolio
+from typing import List, Tuple, Union
+from .types import Portfolio, FrontierPoint
 
-def plot_frontier(results: List[Tuple[float, float, Portfolio]], title: str = "Net-Zero Efficient Frontier"):
+def _unpack_frontier(results: List[Union[FrontierPoint, Tuple[float, float, Portfolio]]]):
+    """
+    Supports both legacy tuple outputs and the new FrontierPoint dataclass.
+    """
+    if not results:
+        return [], []
+
+    first = results[0]
+    if isinstance(first, FrontierPoint):
+        risks = [p.risk for p in results]  # type: ignore[arg-type]
+        abatements = [p.abatement for p in results]  # type: ignore[arg-type]
+    else:
+        risks = [r[0] for r in results]  # type: ignore[index]
+        abatements = [r[1] for r in results]  # type: ignore[index]
+    return abatements, risks
+
+def plot_frontier(results: List[Union[FrontierPoint, Tuple[float, float, Portfolio]]], title: str = "Net-Zero Efficient Frontier"):
     """
     Plots the efficient frontier (Risk vs Abatement).
     """
-    risks = [r[0] for r in results]
-    abatements = [r[1] for r in results]
-    
+    abatements, risks = _unpack_frontier(results)
+
     plt.figure(figsize=(10, 6))
     plt.plot(abatements, risks, 'o-', linewidth=2, markersize=8)
     plt.xlabel('Abatement Target (A*)')

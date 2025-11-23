@@ -48,3 +48,23 @@ class Portfolio:
     @property
     def total_cost(self) -> float:
         return sum(w * t.c for w, t in zip(self.weights, self.technologies))
+
+@dataclass
+class RiskBreakdown:
+    """
+    Container for the risk decomposition R_P(w) = variance + lambda*h(w) - gamma*g(w).
+    """
+    cost_volatility: float
+    stranded_asset: float
+    option_value: float
+    total: float
+
+@dataclass
+class FrontierPoint:
+    """
+    Represents one point on the efficient frontier.
+    """
+    risk: float
+    abatement: float
+    portfolio: Portfolio
+    breakdown: Optional[RiskBreakdown] = None

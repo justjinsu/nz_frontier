@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.stats import norm
 
 class OptionValuator:
     def __init__(self, r: float = 0.05, delta: float = 0.0):
@@ -10,6 +11,22 @@ class OptionValuator:
         """
         self.r = r
         self.delta = delta
+
+    def black_scholes_call(self, S: float, K: float, T: float, sigma: float) -> float:
+        """
+        Closed-form European call valuation used in paper_v2.tex (Section 5).
+        """
+        if T <= 0:
+            return max(S - K, 0.0)
+        if sigma <= 0:
+            return max(S - K * np.exp(-self.r * T), 0.0)
+
+        sqrtT = np.sqrt(T)
+        d1 = (np.log(S / K) + (self.r - self.delta + 0.5 * sigma**2) * T) / (sigma * sqrtT)
+        d2 = d1 - sigma * sqrtT
+        return float(
+            S * np.exp(-self.delta * T) * norm.cdf(d1) - K * np.exp(-self.r * T) * norm.cdf(d2)
+        )
 
     def solve_pde(self, 
                   S_max: float, 
