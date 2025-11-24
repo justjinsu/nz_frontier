@@ -24,7 +24,7 @@ It helps firms select the optimal mix of low-carbon technologies to meet abateme
 st.sidebar.header("Configuration")
 
 # 1. Data Source
-data_source = st.sidebar.radio("Data Source", ["Upload CSV", "Preset Case: Steel", "Preset Case: Petrochemical"])
+data_source = st.sidebar.radio("Data Source", ["Upload CSV", "Preset Case: Steel", "Preset Case: Petrochemical", "Preset Case: Korea Steel", "Preset Case: Korea Energy"])
 
 df = None
 if data_source == "Upload CSV":
@@ -35,6 +35,10 @@ elif data_source == "Preset Case: Steel":
     df = pd.read_csv("data/steel.csv")
 elif data_source == "Preset Case: Petrochemical":
     df = pd.read_csv("data/petrochemical.csv")
+elif data_source == "Preset Case: Korea Steel":
+    df = pd.read_csv("data/korea_steel.csv")
+elif data_source == "Preset Case: Korea Energy":
+    df = pd.read_csv("data/korea_energy.csv")
 
 # 2. Global Parameters
 st.sidebar.subheader("Model Parameters")

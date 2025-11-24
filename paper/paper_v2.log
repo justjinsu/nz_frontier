@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  23 NOV 2025 16:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  24 NOV 2025 11:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -533,31 +533,28 @@ Overfull \hbox (14.76692pt too wide) in paragraph at lines 669--680
 Package natbib Warning: Citation `levi2020decarbonization' on page 15 undefined
  on input line 693.
 
-[15]
-Overfull \hbox (7.37706pt too wide) in paragraph at lines 746--747
+[15] [16] [17] [18]
+Overfull \hbox (7.37706pt too wide) in paragraph at lines 857--858
 \OT1/cmr/m/n/12 ir-re-versibil-ity, learn-ing, and deep un-cer-tainty. This pa-
 per pro-vides such a frame-work, grounded
  []
 
-[16] [17] [18] [19]
+[19] [20] [21] [22]
 
 Package natbib Warning: There were undefined citations.
 
-[20] (./paper_v2.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+[23] (./paper_v2.aux)
 Package rerunfilecheck Info: File `paper_v2.out' has not changed.
-(rerunfilecheck)             Checksum: C4C82A29C5B8AD8EBB8CFBD35343102E;7825.
+(rerunfilecheck)             Checksum: 113EC33673C2BBBB19B34130062DA9C4;8867.
  ) 
 Here is how much of TeX's memory you used:
- 12056 strings out of 476025
- 190248 string characters out of 5790018
+ 12093 strings out of 476025
+ 190718 string characters out of 5790018
  1865388 words of memory out of 5000000
- 32116 multiletter control sequences out of 15000+600000
+ 32126 multiletter control sequences out of 15000+600000
  528505 words of font info for 90 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,76p,1195b,653s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,76p,1195b,671s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -580,10 +577,10 @@ ve/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive
 3/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive
 /2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2
 023/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on paper_v2.pdf (20 pages, 361771 bytes).
+Output written on paper_v2.pdf (23 pages, 371311 bytes).
 PDF statistics:
- 819 PDF objects out of 1000 (max. 8388607)
- 745 compressed objects within 8 object streams
- 230 named destinations out of 1000 (max. 500000)
- 305 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 882 PDF objects out of 1000 (max. 8388607)
+ 804 compressed objects within 9 object streams
+ 257 named destinations out of 1000 (max. 500000)
+ 345 words of extra memory for PDF output out of 10000 (max. 10000000)
 

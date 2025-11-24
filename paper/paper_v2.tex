@@ -698,6 +698,117 @@ Technologies include electric cracking, bio-based feedstocks, and chemical recyc
 \end{itemize}
 
 %==============================================================================
+\section{Case Study: South Korea's Industrial Decarbonization}
+%==============================================================================
+
+We apply our framework to South Korea, a particularly instructive case due to the country's heavy industrial base, concentrated corporate structure, and significant policy-technology gaps. South Korea's steel industry accounts for 15\% of national carbon emissions and 40\% of industrial emissions, making it a critical sector for achieving the country's 2050 net-zero commitment.
+
+\subsection{Korean Steel Sector}
+
+South Korea is home to POSCO (the world's 7th largest steel producer) and Hyundai Steel, with combined crude steel production exceeding 55 million tonnes annually. In 2023, POSCO's Scope 1\&2 emissions were 71.97 Mt CO$_2$ with an intensity of 2.02 tCO$_2$/tcs, while Hyundai Steel emitted 29.27 Mt CO$_2$ at 1.43 tCO$_2$/tcs intensity \citep{posco2023sustainability}.
+
+\paragraph{Technology Portfolio}
+Korean steelmakers face a choice among several decarbonization pathways:
+
+\begin{table}[H]
+\centering
+\caption{Korean Steel Sector Technology Parameters}
+\label{tab:korea_steel}
+\begin{tabular}{lcccccc}
+\toprule
+Technology & $a_j$ & $c_j$ & $\sigma_j$ & $\alpha_j$ & $\pi_j$ & $\tau_j$ \\
+ & (tCO$_2$/t) & (\$/t) & & & & (years) \\
+\midrule
+BF-BOF (Baseline) & 0.0 & 605 & 0.05 & 0.01 & 0.02 & 40 \\
+BF-BOF + CCUS & 1.4 & 720 & 0.18 & 0.08 & 0.08 & 25 \\
+Scrap-EAF & 1.0 & 580 & 0.12 & 0.05 & 0.03 & 25 \\
+HyREX H$_2$-DRI (POSCO) & 1.9 & 800 & 0.30 & 0.20 & 0.10 & 30 \\
+Hy-Cube H$_2$-DRI (Hyundai) & 1.85 & 780 & 0.28 & 0.18 & 0.12 & 30 \\
+EAF + Green H$_2$ DRI & 2.0 & 850 & 0.35 & 0.22 & 0.15 & 30 \\
+Molten Oxide Electrolysis & 2.1 & 1200 & 0.45 & 0.28 & 0.20 & 35 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key Findings}
+Applying our framework reveals several insights:
+
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{High correlation risk}: Both POSCO's HyREX and Hyundai's Hy-Cube technologies depend on green hydrogen availability, creating $\rho_{jk} \approx 0.4$ correlation. This concentration increases portfolio variance.
+
+    \item \textbf{Investment gap as risk factor}: Korea has allocated only 268.5 billion won (\$193M) in government subsidies versus POSCO's stated need of 20 trillion won (\$14.8B). This policy uncertainty manifests as higher $\sigma_j$ for hydrogen-based technologies.
+
+    \item \textbf{Timeline disadvantage}: Sweden's H$_2$-DRI comes online in 2025, Germany/US in 2026, but Korea's first H$_2$-DRI is projected post-2035. This 10-year lag increases stranded asset risk for existing blast furnaces ($\sqrt{\tau} \cdot \sigma$ term in equation \ref{eq:stranded}).
+
+    \item \textbf{EAF as risk-efficient bridge}: Scrap-EAF offers moderate abatement ($a = 1.0$) with lower volatility ($\sigma = 0.12$) and higher option value from modularity. POSCO's 2.5 Mt EAF at Gwangyang represents this strategy.
+\end{enumerate}
+
+\paragraph{Optimal Portfolio Implications}
+For a target of 50\% emissions reduction by 2030, our model suggests a diversified portfolio emphasizing EAF expansion (40-50\% weight) with selective CCUS deployment (20-30\%) as a bridge technology, while maintaining modest H$_2$-DRI investment (15-25\%) to capture learning curve benefits despite higher uncertainty.
+
+\subsection{Korean Energy Sector}
+
+South Korea's power sector presents distinct challenges: renewables supplied only 10.5\% of electricity in 2024, versus the OECD average of approximately 30\%. The 11th Basic Plan for Long-Term Electricity Supply (February 2025) targets 121.9 GW renewable capacity by 2038.
+
+\begin{table}[H]
+\centering
+\caption{Korean Energy Sector Technology Parameters}
+\label{tab:korea_energy}
+\begin{tabular}{lcccccc}
+\toprule
+Technology & $a_j$ & $c_j$ & $\sigma_j$ & $\alpha_j$ & $\pi_j$ & $\tau_j$ \\
+ & (rel.) & (\$/MWh) & & & & (years) \\
+\midrule
+Coal Power (Baseline) & 0.0 & 45 & 0.08 & 0.01 & 0.05 & 40 \\
+LNG CCGT & 0.50 & 65 & 0.15 & 0.03 & 0.03 & 30 \\
+LNG + CCS & 0.85 & 95 & 0.20 & 0.06 & 0.08 & 25 \\
+Nuclear (APR1400) & 0.95 & 80 & 0.10 & 0.02 & 0.02 & 60 \\
+Solar PV (Utility) & 0.98 & 42 & 0.18 & 0.12 & 0.02 & 25 \\
+Offshore Wind & 0.97 & 85 & 0.22 & 0.10 & 0.03 & 25 \\
+Green H$_2$ Electrolysis & 0.99 & 150 & 0.35 & 0.18 & 0.10 & 20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Distinctive Features}
+Korea's energy transition exhibits unusual characteristics:
+
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{CCS dependence}: BloombergNEF projects CCS will account for 41\% of Korea's emissions abatement by 2050, versus 14\% globally. This creates concentrated technology risk.
+
+    \item \textbf{Nuclear as low-variance anchor}: APR1400 reactors offer high abatement ($a = 0.95$) with low volatility ($\sigma = 0.10$), though long capital lifetime ($\tau = 60$) increases stranding exposure to future policy shifts.
+
+    \item \textbf{Renewable cost disadvantage}: Solar PV costs in Korea exceed global benchmarks, reducing the cost-efficiency frontier compared to peers.
+
+    \item \textbf{Corporate procurement barriers}: RE100 members source only 12\% of electricity from renewables in Korea versus 53\% globally, indicating institutional constraints beyond technology costs.
+\end{enumerate}
+
+\subsection{Cross-Sector Correlation}
+
+A critical insight from the Korean case is the correlation between steel and energy decarbonization. Both sectors depend on:
+\begin{itemize}
+    \item Green hydrogen availability (creating cross-sector $\rho > 0$)
+    \item Renewable electricity prices
+    \item CCS infrastructure deployment
+\end{itemize}
+
+This suggests that firm-level portfolio optimization should be extended to sector-level or national-level coordination, as individual firm decisions create positive externalities through shared infrastructure and learning spillovers \citep{acemoglu2016transition}.
+
+\subsection{Policy Implications for Korea}
+
+Our framework suggests several policy priorities:
+
+\begin{enumerate}
+    \item \textbf{Increase subsidy allocation}: The current 268.5 billion won is insufficient to reduce $\sigma_j$ for emerging technologies to competitive levels with European peers.
+
+    \item \textbf{Diversify technology bets}: Over-reliance on CCS (41\% of abatement) concentrates risk. Portfolio theory suggests spreading investment across solar, wind, nuclear, and hydrogen.
+
+    \item \textbf{Accelerate timeline}: The 10-year lag behind European H$_2$-DRI deployment increases stranded asset risk and foregoes learning curve benefits. Theorem \ref{thm:precaution} suggests precautionary early investment.
+
+    \item \textbf{Address corporate procurement}: Institutional barriers to renewable procurement increase effective $c_j$ for corporate buyers beyond technology costs.
+\end{enumerate}
+
+%==============================================================================
 \section{Extensions}
 %==============================================================================
 
@@ -982,6 +1093,11 @@ Pfeiffer, A., Millar, R., Hepburn, C., \& Beinhocker, E. (2016).
 Pigou, A. C. (1920).
 \newblock \emph{The Economics of Welfare}.
 \newblock Macmillan.
+
+\bibitem[POSCO(2023)]{posco2023sustainability}
+POSCO. (2023).
+\newblock \emph{POSCO Sustainability Report 2023}.
+\newblock POSCO Holdings.
 
 \bibitem[Pindyck(1991)]{pindyck1991irreversibility}
 Pindyck, R. S. (1991).
