@@ -299,7 +299,8 @@ if df is not None:
         # =============================================================================
         # Tab Layout
         # =============================================================================
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "📊 Case Study",
             "Monte Carlo Frontier",
             "Risk Decomposition",
             "Dynamic Transition",
@@ -307,6 +308,226 @@ if df is not None:
             "Robust Optimization",
             "Cost Simulation"
         ])
+
+        # ---------------------------------------------------------------------
+        # Tab 0: Case Study Context
+        # ---------------------------------------------------------------------
+        with tab0:
+            if "Korea Steel" in data_source:
+                st.subheader("🇰🇷 Case Study: South Korea's Steel Sector Decarbonization")
+
+                st.markdown("""
+                ### Industry Context
+
+                South Korea's steel industry accounts for **15% of national carbon emissions** and **40% of industrial emissions**,
+                making it critical for the country's 2050 net-zero commitment. The sector is dominated by two major players:
+
+                | Company | Production | Emissions (2024) | Intensity |
+                |---------|------------|------------------|-----------|
+                | **POSCO** | ~40 Mt/year | 71.07 Mt CO₂ | 2.02 tCO₂/tcs |
+                | **Hyundai Steel** | ~20 Mt/year | ~29 Mt CO₂ | 1.43 tCO₂/tcs |
+
+                ### Key Technologies (2024-2025 Data)
+                """)
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown("""
+                    #### 🔵 POSCO HyREX
+                    - **April 2024**: Pilot success at Pohang - 24 tons/day at 0.4 tCO₂/t
+                    - **October 2025**: BHP partnership for 300kt demo plant
+                    - **Target**: Commercial scale by 2030
+                    - **Cost**: $616/ton (at H₂ price $5/kg)
+                    """)
+
+                with col2:
+                    st.markdown("""
+                    #### 🔴 Hyundai Hy-Cube
+                    - **Hy-Arc** electric furnace technology
+                    - **2025**: $6B Louisiana plant announced
+                    - Blue H₂ initially → Green H₂ post-2034
+                    - **Cost**: $600/ton estimated
+                    """)
+
+                st.markdown("""
+                ### Investment Gap Analysis
+
+                | Region | Government Funding | Production |
+                |--------|-------------------|------------|
+                | **Korea** | KRW 268.5B ($198M) | 55 Mt/year |
+                | **Germany** | ~$7.5B | 26 Mt/year |
+                | **Ratio** | **38× less** per ton | - |
+
+                POSCO estimates **KRW 20 trillion ($14.8B)** needed for HyREX commercialization.
+
+                ### Green Premium Economics
+                """)
+
+                # Green premium visualization
+                h2_prices = [1.0, 1.5, 2.0, 3.0, 5.0]
+                bfbof_cost = 390
+                green_costs = [491, 539, 587, 616, 653]  # Approximate LCOS at different H2 prices
+
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.bar([f"${p}/kg" for p in h2_prices], green_costs, color='green', alpha=0.7, label='H₂-DRI-EAF')
+                ax.axhline(y=bfbof_cost, color='red', linestyle='--', linewidth=2, label=f'BF-BOF Baseline (${bfbof_cost}/t)')
+                ax.axhline(y=539, color='orange', linestyle=':', linewidth=2, label='BF-BOF + $15/tCO₂ carbon price')
+                ax.set_xlabel('Hydrogen Price', fontsize=11)
+                ax.set_ylabel('Levelized Cost of Steel ($/ton)', fontsize=11)
+                ax.set_title('Green Steel Cost Parity Analysis', fontsize=12)
+                ax.legend()
+                ax.grid(True, alpha=0.3, axis='y')
+                st.pyplot(fig)
+
+                st.markdown("""
+                **Key Insight**: At H₂ price $1.5/kg with $15/tCO₂ carbon pricing, green H₂-DRI-EAF becomes
+                **cost-competitive** with traditional BF-BOF steelmaking.
+
+                ### Timeline Comparison
+                """)
+
+                timeline_data = {
+                    'Project': ['HYBRIT (Sweden)', 'H2 Green Steel', 'SALCOS (Germany)', 'HyREX (Korea)', 'Hy-Cube Louisiana'],
+                    'Company': ['SSAB/LKAB/Vattenfall', 'Stegra', 'Salzgitter', 'POSCO', 'Hyundai'],
+                    'Commercial': ['2026', '2025-2030', '2026', '2030+', '2028+'],
+                    'Scale': ['Fossil-free steel', '5 Mt/year', '1 Mt/year', '300kt demo', 'TBD']
+                }
+                st.dataframe(pd.DataFrame(timeline_data), use_container_width=True)
+
+                st.warning("""
+                ⚠️ **Timeline Risk**: Korea's HyREX lags European competitors by **4-6 years**,
+                increasing stranded asset risk for existing blast furnaces.
+                """)
+
+            elif "Global Steel" in data_source:
+                st.subheader("🌍 Case Study: Global Green Steel Race")
+
+                st.markdown("""
+                ### The Global Green Steel Landscape (2024-2025)
+
+                The steel industry accounts for **8% of global CO₂ emissions**. Major steelmakers worldwide
+                are racing to commercialize low-carbon production technologies.
+
+                ### Technology Pathways
+
+                | Route | Emissions | Cost Premium | TRL |
+                |-------|-----------|--------------|-----|
+                | **BF-BOF** (baseline) | 2.2 tCO₂/t | - | 9 |
+                | **Scrap-EAF** | 0.66 tCO₂/t | ~6% | 9 |
+                | **BF-BOF + CCS** | 0.8-1.0 tCO₂/t | ~19% | 7-8 |
+                | **NG-DRI-EAF** | 1.0-1.2 tCO₂/t | ~17% | 8 |
+                | **H₂-DRI-EAF** | 0.3-0.5 tCO₂/t | ~70%* | 6-7 |
+                | **MOE** | ~0 tCO₂/t | TBD | 4-5 |
+
+                *At current H₂ prices ($5/kg); drops to ~20% at $1.5/kg
+
+                ### Leading Projects
+                """)
+
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.markdown("""
+                    #### 🇸🇪 Sweden
+                    - **HYBRIT**: World's first fossil-free steel (2021 pilot)
+                    - **H2 Green Steel**: 5 Mt/year by 2030
+                    - Advantage: Cheap hydro + wind
+                    """)
+
+                with col2:
+                    st.markdown("""
+                    #### 🇩🇪 Germany
+                    - **SALCOS**: 1 Mt H₂-DRI by 2026
+                    - **ThyssenKrupp**: Duisburg H₂ demo
+                    - €7.5B government funding
+                    """)
+
+                with col3:
+                    st.markdown("""
+                    #### 🇺🇸 United States
+                    - **Nucor**: Leading EAF (0.38 tCO₂/t)
+                    - **Hyundai Louisiana**: $6B H₂ plant
+                    - IRA incentives: $85/tCO₂ 45Q credit
+                    """)
+
+                st.markdown("""
+                ### Hydrogen Cost Trajectory
+                """)
+
+                years = ['2024', '2025', '2030', '2035', '2050']
+                h2_costs = [4.5, 3.5, 2.0, 1.5, 1.0]
+
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.plot(years, h2_costs, 'o-', linewidth=2, markersize=10, color='green')
+                ax.axhline(y=1.4, color='red', linestyle='--', label='Cost parity threshold')
+                ax.fill_between(years, h2_costs, alpha=0.3, color='green')
+                ax.set_xlabel('Year', fontsize=11)
+                ax.set_ylabel('Green Hydrogen Cost ($/kg)', fontsize=11)
+                ax.set_title('Projected Green Hydrogen Cost Decline', fontsize=12)
+                ax.legend()
+                ax.grid(True, alpha=0.3)
+                st.pyplot(fig)
+
+            elif "Korea Energy" in data_source:
+                st.subheader("🇰🇷 Case Study: South Korea's Energy Transition")
+
+                st.markdown("""
+                ### Power Sector Context
+
+                South Korea's power sector faces unique challenges:
+                - **Renewables**: Only 10.5% of electricity (2024) vs OECD avg ~30%
+                - **Nuclear**: 30% of generation (APR1400 fleet)
+                - **CCS Dependence**: BloombergNEF projects 41% of abatement via CCS by 2050
+
+                ### 11th Basic Plan for Long-Term Electricity Supply (Feb 2025)
+                - Target: **121.9 GW** renewable capacity by 2038
+                - Nuclear expansion approved
+                - RE100 compliance challenges: Korean members source only 12% renewables vs 53% globally
+
+                ### Technology Comparison
+
+                | Technology | LCOE ($/MWh) | Emissions | Dispatchability |
+                |------------|--------------|-----------|-----------------|
+                | Coal | 45 | High | Baseload |
+                | LNG CCGT | 65 | Medium | Flexible |
+                | Nuclear | 80 | Very Low | Baseload |
+                | Solar PV | 42 | Zero | Variable |
+                | Offshore Wind | 85 | Zero | Variable |
+                | Green H₂ | 150 | Zero | Storage |
+                """)
+
+            else:
+                st.subheader("📊 Case Study Overview")
+
+                st.markdown("""
+                Select a preset case study from the sidebar to see detailed industry context:
+
+                - **🇰🇷 Korea Steel**: POSCO HyREX, Hyundai Hy-Cube, investment gap analysis
+                - **🌍 Global Steel**: HYBRIT, H2 Green Steel, international comparison
+                - **🇰🇷 Korea Energy**: Power sector transition, nuclear + renewables mix
+
+                Or upload your own CSV data to analyze custom technology portfolios.
+
+                ### Framework Overview
+
+                This application implements **Portfolio Theory for Corporate Decarbonization**, extending
+                Markowitz (1952) portfolio optimization to climate transition investment.
+
+                **Key Innovation**: The risk function captures three components:
+
+                $$R_P(\\mathbf{w}) = \\underbrace{\\mathbf{w}^T \\Sigma \\mathbf{w}}_{\\text{Cost Volatility}}
+                + \\lambda \\underbrace{h(\\mathbf{w})}_{\\text{Stranded Asset Risk}}
+                - \\gamma \\underbrace{g(\\mathbf{w})}_{\\text{Option Value}}$$
+
+                Use the other tabs to:
+                1. **Monte Carlo Frontier**: Generate efficient frontier with confidence bands
+                2. **Risk Decomposition**: Analyze risk components
+                3. **Dynamic Transition**: Plan multi-period pathways
+                4. **Stochastic Dominance**: Compare portfolios
+                5. **Robust Optimization**: Account for parameter uncertainty
+                6. **Cost Simulation**: Visualize technology cost evolution
+                """)
 
         # ---------------------------------------------------------------------
         # Tab 1: Monte Carlo Efficient Frontier
