@@ -5,6 +5,16 @@ try:
     from .simulation import CostSimulator
     from .frontier import EfficientFrontier
     from .dynamic import DynamicOptimizer
+    from .advanced import (
+        MonteCarloFrontier,
+        MonteCarloFrontierResult,
+        StochasticDominanceAnalyzer,
+        StochasticDominanceResult,
+        RobustOptimizer,
+        RobustOptimizationResult,
+        DynamicRealOptionsOptimizer,
+        build_correlation_matrix,
+    )
 except ImportError as e:
     print(f"Error importing nz_frontier components: {e}")
     print("Please ensure all dependencies are installed: pip install -r requirements.txt")
@@ -21,4 +31,13 @@ __all__ = [
     "DynamicOptimizer",
     "RiskBreakdown",
     "FrontierPoint",
+    # Advanced modules
+    "MonteCarloFrontier",
+    "MonteCarloFrontierResult",
+    "StochasticDominanceAnalyzer",
+    "StochasticDominanceResult",
+    "RobustOptimizer",
+    "RobustOptimizationResult",
+    "DynamicRealOptionsOptimizer",
+    "build_correlation_matrix",
 ]

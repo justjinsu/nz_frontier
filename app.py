@@ -1,30 +1,66 @@
+"""
+Net-Zero Frontier: Advanced Risk-Efficiency Analysis for Corporate Decarbonization
+
+This application implements the complete theoretical framework from paper_v2.tex:
+- Monte Carlo Efficient Frontier with confidence bands
+- Full correlation matrix construction
+- Dynamic real options valuation
+- Stochastic dominance analysis
+- Robust optimization under parameter uncertainty
+
+Author: Jinsu Park, PLANiT Institute
+"""
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from nz_frontier import Technology, EfficientFrontier, DynamicOptimizer, CostSimulator
+from matplotlib.patches import Patch
+import warnings
+warnings.filterwarnings('ignore')
+
+from nz_frontier import (
+    Technology,
+    EfficientFrontier,
+    DynamicOptimizer,
+    CostSimulator,
+    MonteCarloFrontier,
+    StochasticDominanceAnalyzer,
+    RobustOptimizer,
+    DynamicRealOptionsOptimizer,
+    build_correlation_matrix,
+    RiskModel,
+)
 
 st.set_page_config(page_title="Net-Zero Frontier", layout="wide")
 
-st.title("Risk-Efficiency Theory of Corporate Decarbonization")
+st.title("Portfolio Theory for Corporate Decarbonization")
 st.markdown("""
-### Optimal Portfolio Design for Net-Zero Transition
+### Risk-Efficiency Framework for Net-Zero Investment under Uncertainty
 
-This application implements the **Risk-Efficiency Framework** for corporate decarbonization. 
-It helps firms select the optimal mix of low-carbon technologies to meet abatement targets while **minimizing transition risks** (technology failure, stranded assets, and cost volatility).
+This application implements the complete theoretical framework from **Park (2024)**, extending
+Markowitz portfolio theory to corporate decarbonization with:
 
-**Key Features:**
-*   **Efficient Frontier**: Visualize the trade-off between Abatement and Risk.
-*   **Dynamic Pathways**: Plan multi-year investment strategies using Model Predictive Control.
-*   **Real Options**: Value flexibility in emerging technologies.
-*   **Stochastic Simulation**: Stress-test portfolios against cost shocks and jumps.
+- **Monte Carlo Efficient Frontier** with 90% confidence bands (Section 9.3)
+- **Full Correlation Matrix** capturing technology interdependencies (Remark 1)
+- **Dynamic Real Options** re-valued at each simulation step (Section 5)
+- **Stochastic Dominance Analysis** for portfolio comparison (Extension)
+- **Robust Optimization** under parameter uncertainty (Section 9.1)
+
+**Risk Function:** $R_P(\\mathbf{w}) = \\mathbf{w}^T \\Sigma \\mathbf{w} + \\lambda h(\\mathbf{w}) - \\gamma g(\\mathbf{w})$
 """)
 
-# Sidebar for Inputs
+# =============================================================================
+# Sidebar Configuration
+# =============================================================================
 st.sidebar.header("Configuration")
 
 # 1. Data Source
-data_source = st.sidebar.radio("Data Source", ["Upload CSV", "Preset Case: Steel", "Preset Case: Petrochemical", "Preset Case: Korea Steel", "Preset Case: Korea Energy"])
+data_source = st.sidebar.radio(
+    "Data Source",
+    ["Preset Case: Korea Steel", "Preset Case: Korea Energy",
+     "Preset Case: Steel", "Preset Case: Petrochemical", "Upload CSV"]
+)
 
 df = None
 if data_source == "Upload CSV":
@@ -40,19 +76,40 @@ elif data_source == "Preset Case: Korea Steel":
 elif data_source == "Preset Case: Korea Energy":
     df = pd.read_csv("data/korea_energy.csv")
 
-# 2. Global Parameters
+# 2. Model Parameters
 st.sidebar.subheader("Model Parameters")
-abatement_target_min = st.sidebar.number_input("Min Abatement Target", value=10.0)
-abatement_target_max = st.sidebar.number_input("Max Abatement Target", value=100.0)
-budget_constraint = st.sidebar.number_input("Budget Constraint ($)", value=2000.0)
+abatement_target_min = st.sidebar.number_input("Min Abatement Target", value=10.0, step=5.0)
+abatement_target_max = st.sidebar.number_input("Max Abatement Target", value=100.0, step=10.0)
+budget_constraint = st.sidebar.number_input("Budget Constraint ($M)", value=2000.0, step=100.0)
 
-# 3. Advanced Settings
+# 3. Risk Preference Parameters (from Equation 4)
+st.sidebar.subheader("Risk Preferences (Eq. 4)")
+lambda_param = st.sidebar.slider(
+    "λ (Stranded Asset Risk Weight)",
+    min_value=0.0, max_value=3.0, value=1.0, step=0.1,
+    help="Weight on stranded asset risk h(w) in the risk function"
+)
+gamma_param = st.sidebar.slider(
+    "γ (Option Value Weight)",
+    min_value=0.0, max_value=3.0, value=1.0, step=0.1,
+    help="Weight on option value g(w) in the risk function"
+)
+
+# 4. Advanced Settings
 with st.sidebar.expander("Advanced Settings"):
-    risk_free_rate = st.number_input("Risk-Free Rate", value=0.05)
-    time_horizon = st.number_input("Time Horizon (Years)", value=20)
-    n_sim_paths = st.number_input("Simulation Paths", value=100)
+    risk_free_rate = st.number_input("Risk-Free Rate", value=0.05, step=0.01)
+    time_horizon = st.number_input("Time Horizon (Years)", value=20, step=1)
+    n_mc_simulations = st.number_input("Monte Carlo Simulations", value=200, step=50,
+                                        help="More simulations = smoother confidence bands but slower")
+    n_frontier_points = st.number_input("Frontier Points", value=15, step=5)
 
-def load_technologies(df):
+    st.markdown("**Uncertainty Parameters (Robust Optimization)**")
+    cost_uncertainty = st.slider("Cost Uncertainty (±%)", 0, 50, 20) / 100
+    vol_uncertainty = st.slider("Volatility Uncertainty (±%)", 0, 50, 30) / 100
+
+
+def load_technologies(df: pd.DataFrame) -> list:
+    """Load technologies from DataFrame."""
     techs = []
     for _, row in df.iterrows():
         t = Technology(
@@ -62,7 +119,7 @@ def load_technologies(df):
             sigma=row['sigma'],
             rho=row.get('rho', 0.0),
             o=row.get('o', 0.0),
-            tau=row.get('tau', 0.0),
+            tau=row.get('tau', 20.0),
             jump_intensity=row.get('jump_intensity', 0.0),
             jump_size=row.get('jump_size', 0.0),
             strike_price=row.get('strike_price', 0.0),
@@ -73,194 +130,661 @@ def load_technologies(df):
         techs.append(t)
     return techs
 
+
+def plot_monte_carlo_frontier(mc_result, title="Monte Carlo Efficient Frontier"):
+    """Plot frontier with confidence bands."""
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    targets = mc_result.abatement_targets
+    mean_risk = mc_result.mean_risk
+    p5 = mc_result.percentile_5
+    p95 = mc_result.percentile_95
+
+    # Confidence band
+    ax.fill_between(targets, p5, p95, alpha=0.3, color='steelblue', label='90% Confidence Band')
+
+    # Mean frontier
+    ax.plot(targets, mean_risk, 'o-', linewidth=2, markersize=6, color='darkblue', label='Expected Frontier')
+
+    ax.set_xlabel('Abatement Target (tCO₂)', fontsize=12)
+    ax.set_ylabel('Portfolio Transition Risk $R_P$', fontsize=12)
+    ax.set_title(title, fontsize=14)
+    ax.legend(loc='upper left')
+    ax.grid(True, alpha=0.3)
+
+    return fig
+
+
+def plot_risk_decomposition(breakdown, tech_names):
+    """Plot risk decomposition bar chart."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    components = ['Cost Volatility\n$w^T\\Sigma w$',
+                  f'Stranded Asset\n$\\lambda h(w)$',
+                  f'Option Value\n$-\\gamma g(w)$']
+    values = [breakdown.cost_volatility,
+              breakdown.stranded_asset,
+              -breakdown.option_value]  # Negative because it reduces risk
+    colors = ['#E74C3C', '#F39C12', '#27AE60']
+
+    bars = ax.bar(components, values, color=colors, edgecolor='black', linewidth=1.2)
+    ax.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
+    ax.set_ylabel('Risk Contribution', fontsize=11)
+    ax.set_title(f'Risk Decomposition (Total: {breakdown.total:.2f})', fontsize=12)
+
+    # Add value labels
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax.annotate(f'{val:.2f}',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3 if height >= 0 else -15),
+                    textcoords="offset points",
+                    ha='center', va='bottom' if height >= 0 else 'top',
+                    fontsize=10)
+
+    return fig
+
+
+def plot_stochastic_dominance(sd_result):
+    """Plot risk distribution comparison for stochastic dominance."""
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # Histogram comparison
+    ax1 = axes[0]
+    ax1.hist(sd_result.risk_distribution_a, bins=30, alpha=0.6,
+             label=sd_result.portfolio_a_name, color='steelblue', density=True)
+    ax1.hist(sd_result.risk_distribution_b, bins=30, alpha=0.6,
+             label=sd_result.portfolio_b_name, color='coral', density=True)
+    ax1.set_xlabel('Portfolio Risk', fontsize=11)
+    ax1.set_ylabel('Density', fontsize=11)
+    ax1.set_title('Risk Distribution Comparison', fontsize=12)
+    ax1.legend()
+
+    # CDF comparison
+    ax2 = axes[1]
+    sorted_a = np.sort(sd_result.risk_distribution_a)
+    sorted_b = np.sort(sd_result.risk_distribution_b)
+    cdf_a = np.arange(1, len(sorted_a) + 1) / len(sorted_a)
+    cdf_b = np.arange(1, len(sorted_b) + 1) / len(sorted_b)
+
+    ax2.plot(sorted_a, cdf_a, label=sd_result.portfolio_a_name, linewidth=2, color='steelblue')
+    ax2.plot(sorted_b, cdf_b, label=sd_result.portfolio_b_name, linewidth=2, color='coral')
+    ax2.set_xlabel('Portfolio Risk', fontsize=11)
+    ax2.set_ylabel('Cumulative Probability', fontsize=11)
+    ax2.set_title('CDF Comparison (Stochastic Dominance)', fontsize=12)
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    return fig
+
+
+def plot_dynamic_pathway(portfolios, technologies, cost_history=None):
+    """Plot dynamic transition pathway."""
+    n_periods = len(portfolios)
+    n_tech = len(technologies)
+    tech_names = [t.name for t in technologies]
+
+    weights_history = np.array([p.weights for p in portfolios])
+
+    fig, axes = plt.subplots(1, 2 if cost_history else 1, figsize=(14 if cost_history else 10, 6))
+
+    if cost_history:
+        ax1, ax2 = axes
+    else:
+        ax1 = axes
+
+    # Stacked area for capacity
+    ax1.stackplot(range(n_periods), weights_history.T, labels=tech_names, alpha=0.8)
+    ax1.set_xlabel('Period', fontsize=11)
+    ax1.set_ylabel('Installed Capacity', fontsize=11)
+    ax1.set_title('Technology Transition Pathway', fontsize=12)
+    ax1.legend(loc='upper left', fontsize=9)
+    ax1.grid(True, alpha=0.3)
+
+    # Cost evolution
+    if cost_history:
+        for tech_name, costs in cost_history.items():
+            ax2.plot(range(len(costs)), costs, label=tech_name, linewidth=2)
+        ax2.set_xlabel('Period', fontsize=11)
+        ax2.set_ylabel('Technology Cost ($/unit)', fontsize=11)
+        ax2.set_title('Cost Evolution with Learning & Jumps', fontsize=12)
+        ax2.legend(loc='upper right', fontsize=9)
+        ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    return fig
+
+
+# =============================================================================
+# Main Application
+# =============================================================================
+
 if df is not None:
     st.write(f"### Loaded Technologies ({data_source})")
-    st.dataframe(df)
-    
+    st.dataframe(df, use_container_width=True)
+
     try:
         technologies = load_technologies(df)
-        
-        # Construct Covariance Matrix (Simplified: Diagonal + Rho)
-        n = len(technologies)
-        sigmas = np.array([t.sigma for t in technologies])
-        cov_matrix = np.diag(sigmas**2) 
-        
-        # --- Tab Layout ---
-        tab1, tab2, tab3, tab4 = st.tabs(["Efficient Frontier", "Dynamic Transition", "Cost Simulation", "Carbon Price Analysis"])
-        
+        n_tech = len(technologies)
+
+        # Build FULL correlation matrix (not just diagonal!)
+        st.info("Building full correlation matrix from technology characteristics...")
+        cov_matrix = build_correlation_matrix(technologies)
+
+        # Show correlation matrix
+        with st.expander("View Correlation Matrix"):
+            sigmas = np.array([t.sigma for t in technologies])
+            with np.errstate(divide='ignore', invalid='ignore'):
+                corr_matrix = cov_matrix / np.outer(sigmas, sigmas)
+                corr_matrix = np.nan_to_num(corr_matrix, nan=0.0)
+                np.fill_diagonal(corr_matrix, 1.0)
+
+            corr_df = pd.DataFrame(
+                corr_matrix,
+                index=[t.name for t in technologies],
+                columns=[t.name for t in technologies]
+            )
+            st.dataframe(corr_df.style.background_gradient(cmap='RdYlGn', vmin=-1, vmax=1).format("{:.2f}"))
+
+        # =============================================================================
+        # Tab Layout
+        # =============================================================================
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "Monte Carlo Frontier",
+            "Risk Decomposition",
+            "Dynamic Transition",
+            "Stochastic Dominance",
+            "Robust Optimization",
+            "Cost Simulation"
+        ])
+
+        # ---------------------------------------------------------------------
+        # Tab 1: Monte Carlo Efficient Frontier
+        # ---------------------------------------------------------------------
         with tab1:
-            st.subheader("Net-Zero Efficient Frontier")
-            if st.button("Generate Frontier"):
-                with st.spinner("Optimizing..."):
-                    frontier = EfficientFrontier(technologies, cov_matrix)
-                    results = frontier.compute(abatement_target_min, abatement_target_max, n_points=20, budget_constraint=budget_constraint)
-                    
-                    # Plotting
-                    risks = [p.risk for p in results]
-                    abatements = [p.abatement for p in results]
-                    
-                    fig, ax = plt.subplots(figsize=(10, 6))
-                    ax.plot(abatements, risks, 'o-', linewidth=2, markersize=8, color='#2E86C1')
-                    ax.set_xlabel('Abatement Target (tCO2)')
-                    ax.set_ylabel('Portfolio Transition Risk')
-                    ax.set_title('Efficient Frontier')
-                    ax.grid(True, alpha=0.3)
-                    st.pyplot(fig)
-                    
-                    # Portfolio Composition
-                    st.subheader("Optimal Portfolio Composition")
-                    target_select = st.select_slider("Select Abatement Target to View Portfolio", options=abatements)
-                    
-                    # Find closest result
-                    idx = np.argmin(np.abs(np.array(abatements) - target_select))
-                    selected_portfolio = results[idx].portfolio
-                    
-                    fig2, ax2 = plt.subplots()
-                    weights = selected_portfolio.weights
-                    names = [t.name for t in technologies]
-                    ax2.bar(names, weights, color='#28B463')
-                    ax2.set_ylabel('Capacity (Units)')
-                    ax2.set_title(f'Portfolio for Target {target_select:.1f}')
-                    plt.xticks(rotation=45)
-                    st.pyplot(fig2)
+            st.subheader("Monte Carlo Efficient Frontier")
+            st.markdown("""
+            Computes the efficient frontier via Monte Carlo simulation:
+            1. Simulate $N$ cost paths using jump-diffusion with learning (Eq. 22)
+            2. Re-optimize portfolio for each simulation
+            3. Compute mean frontier with 90% confidence bands
+            """)
 
-        with tab2:
-            st.subheader("Dynamic Transition Pathway")
-            st.info("Simulates a multi-period transition where the abatement target increases over time.")
-            if st.button("Run Dynamic Optimization"):
-                dyn_opt = DynamicOptimizer(technologies, cov_matrix, discount_factor=0.95)
-                
-                # Linear ramp up of target
-                targets = np.linspace(abatement_target_min, abatement_target_max, int(time_horizon))
-                budget_per_period = budget_constraint / time_horizon * 2 # Allow some flex
-                
-                portfolios = dyn_opt.solve_bellman(int(time_horizon), targets, budget_per_period)
-                
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                revalue_options = st.checkbox("Re-value options dynamically", value=True,
+                                              help="Update option values at each MC step based on simulated costs")
+
+            if st.button("Generate Monte Carlo Frontier", type="primary"):
+                with st.spinner(f"Running {n_mc_simulations} Monte Carlo simulations..."):
+                    mc_frontier = MonteCarloFrontier(
+                        technologies,
+                        cov_matrix,
+                        risk_free_rate=risk_free_rate
+                    )
+
+                    mc_result = mc_frontier.compute_frontier(
+                        abatement_min=abatement_target_min,
+                        abatement_max=abatement_target_max,
+                        budget_constraint=budget_constraint,
+                        n_targets=n_frontier_points,
+                        n_simulations=n_mc_simulations,
+                        time_horizon=time_horizon,
+                        lambda_param=lambda_param,
+                        gamma_param=gamma_param,
+                        revalue_options=revalue_options
+                    )
+
+                    # Store in session state
+                    st.session_state['mc_result'] = mc_result
+                    st.session_state['technologies'] = technologies
+                    st.session_state['cov_matrix'] = cov_matrix
+
                 # Plot
-                weights_history = np.array([p.weights for p in portfolios])
-                fig3, ax3 = plt.subplots(figsize=(10, 6))
-                for i, tech in enumerate(technologies):
-                    ax3.plot(range(int(time_horizon)), weights_history[:, i], label=tech.name, linewidth=2)
-                
-                ax3.set_xlabel('Year')
-                ax3.set_ylabel('Installed Capacity')
-                ax3.legend()
-                ax3.grid(True, alpha=0.3)
-                st.pyplot(fig3)
+                fig = plot_monte_carlo_frontier(mc_result)
+                st.pyplot(fig)
 
+                # Statistics
+                st.markdown("#### Frontier Statistics")
+                stats_df = pd.DataFrame({
+                    'Abatement': mc_result.abatement_targets,
+                    'Mean Risk': mc_result.mean_risk,
+                    'Std Dev': mc_result.std_risk,
+                    '5th Percentile': mc_result.percentile_5,
+                    '95th Percentile': mc_result.percentile_95
+                })
+                st.dataframe(stats_df.style.format("{:.2f}"), use_container_width=True)
+
+                # Portfolio composition for selected target
+                st.markdown("#### Optimal Portfolio Composition")
+                target_select = st.select_slider(
+                    "Select Abatement Target",
+                    options=mc_result.abatement_targets.tolist(),
+                    value=mc_result.abatement_targets[len(mc_result.abatement_targets)//2]
+                )
+
+                idx = np.argmin(np.abs(mc_result.abatement_targets - target_select))
+                selected_portfolio = mc_result.optimal_portfolios[idx]
+
+                fig2, ax = plt.subplots(figsize=(10, 5))
+                colors = plt.cm.Set3(np.linspace(0, 1, n_tech))
+                bars = ax.bar([t.name for t in technologies], selected_portfolio.weights, color=colors, edgecolor='black')
+                ax.set_ylabel('Capacity (Units)', fontsize=11)
+                ax.set_title(f'Optimal Portfolio for Target = {target_select:.1f}', fontsize=12)
+                plt.xticks(rotation=45, ha='right')
+                plt.tight_layout()
+                st.pyplot(fig2)
+
+        # ---------------------------------------------------------------------
+        # Tab 2: Risk Decomposition
+        # ---------------------------------------------------------------------
+        with tab2:
+            st.subheader("Risk Decomposition Analysis")
+            st.markdown("""
+            Decomposes total portfolio risk into three components (Equation 4):
+
+            $$R_P(\\mathbf{w}) = \\underbrace{\\mathbf{w}^T \\Sigma \\mathbf{w}}_{\\text{Cost Volatility}}
+            + \\lambda \\underbrace{h(\\mathbf{w})}_{\\text{Stranded Asset Risk}}
+            - \\gamma \\underbrace{g(\\mathbf{w})}_{\\text{Option Value}}$$
+            """)
+
+            if 'mc_result' in st.session_state:
+                mc_result = st.session_state['mc_result']
+
+                target_for_breakdown = st.select_slider(
+                    "Select Abatement Target for Decomposition",
+                    options=mc_result.abatement_targets.tolist(),
+                    value=mc_result.abatement_targets[len(mc_result.abatement_targets)//2],
+                    key="breakdown_target"
+                )
+
+                idx = np.argmin(np.abs(mc_result.abatement_targets - target_for_breakdown))
+                portfolio = mc_result.optimal_portfolios[idx]
+
+                # Compute breakdown
+                risk_model = RiskModel(
+                    technologies, cov_matrix,
+                    r=risk_free_rate,
+                    lambda_param=lambda_param,
+                    gamma_param=gamma_param
+                )
+                breakdown = risk_model.breakdown(portfolio.weights, lambda_param, gamma_param)
+
+                col1, col2 = st.columns([1, 1])
+
+                with col1:
+                    fig = plot_risk_decomposition(breakdown, [t.name for t in technologies])
+                    st.pyplot(fig)
+
+                with col2:
+                    st.markdown("#### Component Details")
+                    st.metric("Cost Volatility (w^T Σ w)", f"{breakdown.cost_volatility:.3f}")
+                    st.metric(f"Stranded Asset Risk (λ={lambda_param})", f"{lambda_param * breakdown.stranded_asset:.3f}")
+                    st.metric(f"Option Value (γ={gamma_param})", f"-{gamma_param * breakdown.option_value:.3f}")
+                    st.metric("**Total Risk**", f"{breakdown.total:.3f}")
+
+                    st.markdown("---")
+                    st.markdown("#### Portfolio Weights")
+                    weights_df = pd.DataFrame({
+                        'Technology': [t.name for t in technologies],
+                        'Weight': portfolio.weights,
+                        'Abatement Contribution': portfolio.weights * np.array([t.a for t in technologies])
+                    })
+                    st.dataframe(weights_df.style.format({'Weight': '{:.2f}', 'Abatement Contribution': '{:.2f}'}))
+            else:
+                st.warning("Please generate the Monte Carlo Frontier first (Tab 1)")
+
+        # ---------------------------------------------------------------------
+        # Tab 3: Dynamic Transition with Real Options
+        # ---------------------------------------------------------------------
         with tab3:
-            st.subheader("Stochastic Cost Simulation")
-            if st.button("Simulate Costs"):
-                sim = CostSimulator(technologies)
-                paths = sim.simulate_paths(time_horizon, dt=0.1, n_paths=n_sim_paths)
-                
-                tech_select = st.selectbox("Select Technology", [t.name for t in technologies])
-                
+            st.subheader("Dynamic Transition Pathway with Real Options")
+            st.markdown("""
+            Multi-period optimization using Model Predictive Control (Section 6) with:
+            - **Irreversibility constraint**: $\\mathbf{w}_t \\geq \\mathbf{w}_{t-1}$
+            - **Dynamic option re-valuation**: Options priced via Monte Carlo at each period
+            - **Learning curve feedback**: Costs evolve with jump-diffusion
+            """)
+
+            col1, col2 = st.columns(2)
+            with col1:
+                n_periods = st.number_input("Number of Periods", value=min(15, time_horizon), step=1)
+            with col2:
+                budget_per_period = st.number_input("Budget per Period ($M)", value=budget_constraint / n_periods * 1.5, step=50.0)
+
+            if st.button("Run Dynamic Optimization with Real Options", type="primary"):
+                with st.spinner("Solving dynamic optimization with Monte Carlo option valuation..."):
+                    dyn_optimizer = DynamicRealOptionsOptimizer(
+                        technologies,
+                        cov_matrix,
+                        risk_free_rate=risk_free_rate,
+                        discount_factor=0.95
+                    )
+
+                    # Linear ramp-up of targets
+                    targets = np.linspace(abatement_target_min, abatement_target_max, int(n_periods)).tolist()
+
+                    portfolios, cost_history = dyn_optimizer.solve_with_options(
+                        T_periods=int(n_periods),
+                        target_path=targets,
+                        budget_per_period=budget_per_period,
+                        lambda_param=lambda_param,
+                        gamma_param=gamma_param,
+                        n_simulations=50  # Fewer for speed
+                    )
+
+                    st.session_state['dyn_portfolios'] = portfolios
+                    st.session_state['cost_history'] = cost_history
+
+                fig = plot_dynamic_pathway(portfolios, technologies, cost_history)
+                st.pyplot(fig)
+
+                # Show final portfolio
+                st.markdown("#### Final Period Portfolio")
+                final_weights = portfolios[-1].weights
+                final_df = pd.DataFrame({
+                    'Technology': [t.name for t in technologies],
+                    'Final Capacity': final_weights,
+                    'Abatement': final_weights * np.array([t.a for t in technologies])
+                })
+                st.dataframe(final_df.style.format({'Final Capacity': '{:.2f}', 'Abatement': '{:.2f}'}))
+
+        # ---------------------------------------------------------------------
+        # Tab 4: Stochastic Dominance
+        # ---------------------------------------------------------------------
+        with tab4:
+            st.subheader("Stochastic Dominance Analysis")
+            st.markdown("""
+            Compare two portfolios for stochastic dominance:
+            - **First-Order (FSD)**: A dominates B if $F_A(x) \\geq F_B(x)$ for all $x$
+            - **Second-Order (SSD)**: A dominates B if $\\int F_A(x)dx \\geq \\int F_B(x)dx$ for all $x$
+
+            FSD implies all risk-averse investors prefer A. SSD implies all risk-averse investors
+            with decreasing absolute risk aversion prefer A.
+            """)
+
+            st.markdown("#### Define Two Portfolios to Compare")
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("**Portfolio A**")
+                weights_a = []
+                for tech in technologies:
+                    w = st.number_input(f"{tech.name}", value=0.0, step=1.0, key=f"a_{tech.name}")
+                    weights_a.append(w)
+                weights_a = np.array(weights_a)
+                name_a = st.text_input("Portfolio A Name", value="Conservative")
+
+            with col2:
+                st.markdown("**Portfolio B**")
+                weights_b = []
+                for tech in technologies:
+                    w = st.number_input(f"{tech.name}", value=0.0, step=1.0, key=f"b_{tech.name}")
+                    weights_b.append(w)
+                weights_b = np.array(weights_b)
+                name_b = st.text_input("Portfolio B Name", value="Aggressive")
+
+            if st.button("Analyze Stochastic Dominance", type="primary"):
+                if np.sum(weights_a) == 0 or np.sum(weights_b) == 0:
+                    st.error("Both portfolios must have non-zero weights")
+                else:
+                    with st.spinner("Running stochastic dominance analysis..."):
+                        analyzer = StochasticDominanceAnalyzer(technologies, cov_matrix)
+                        sd_result = analyzer.compare_portfolios(
+                            weights_a, weights_b,
+                            name_a=name_a, name_b=name_b,
+                            n_simulations=500,
+                            time_horizon=time_horizon,
+                            lambda_param=lambda_param,
+                            gamma_param=gamma_param
+                        )
+
+                    # Results
+                    st.markdown("#### Dominance Results")
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        if sd_result.fsd_a_dominates_b:
+                            st.success(f"✅ {name_a} FIRST-ORDER dominates {name_b}")
+                        elif sd_result.fsd_b_dominates_a:
+                            st.success(f"✅ {name_b} FIRST-ORDER dominates {name_a}")
+                        else:
+                            st.info("No first-order dominance relationship")
+
+                    with col2:
+                        if sd_result.ssd_a_dominates_b:
+                            st.success(f"✅ {name_a} SECOND-ORDER dominates {name_b}")
+                        elif sd_result.ssd_b_dominates_a:
+                            st.success(f"✅ {name_b} SECOND-ORDER dominates {name_a}")
+                        else:
+                            st.info("No second-order dominance relationship")
+
+                    # Plot
+                    fig = plot_stochastic_dominance(sd_result)
+                    st.pyplot(fig)
+
+                    # Statistics
+                    st.markdown("#### Distribution Statistics")
+                    stats = pd.DataFrame({
+                        'Metric': ['Mean Risk', 'Std Dev', 'VaR (5%)', 'CVaR (5%)'],
+                        name_a: [
+                            np.mean(sd_result.risk_distribution_a),
+                            np.std(sd_result.risk_distribution_a),
+                            np.percentile(sd_result.risk_distribution_a, 95),
+                            np.mean(sd_result.risk_distribution_a[sd_result.risk_distribution_a >= np.percentile(sd_result.risk_distribution_a, 95)])
+                        ],
+                        name_b: [
+                            np.mean(sd_result.risk_distribution_b),
+                            np.std(sd_result.risk_distribution_b),
+                            np.percentile(sd_result.risk_distribution_b, 95),
+                            np.mean(sd_result.risk_distribution_b[sd_result.risk_distribution_b >= np.percentile(sd_result.risk_distribution_b, 95)])
+                        ]
+                    })
+                    st.dataframe(stats.style.format({name_a: '{:.3f}', name_b: '{:.3f}'}))
+
+        # ---------------------------------------------------------------------
+        # Tab 5: Robust Optimization
+        # ---------------------------------------------------------------------
+        with tab5:
+            st.subheader("Robust Optimization under Uncertainty")
+            st.markdown("""
+            Solves the min-max problem (Section 9.1):
+
+            $$\\min_{\\mathbf{w}} \\max_{\\theta \\in \\Theta} R_P(\\mathbf{w}; \\theta)$$
+
+            where $\\Theta$ is an uncertainty set for costs, volatilities, and correlations.
+            This provides protection against estimation error and model misspecification.
+            """)
+
+            st.markdown("#### Uncertainty Parameters")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                robust_cost_unc = st.slider("Cost Uncertainty (±%)", 0, 50, int(cost_uncertainty*100), key="robust_cost") / 100
+            with col2:
+                robust_vol_unc = st.slider("Volatility Uncertainty (±%)", 0, 50, int(vol_uncertainty*100), key="robust_vol") / 100
+            with col3:
+                robust_corr_unc = st.slider("Correlation Uncertainty (±%)", 0, 50, 20, key="robust_corr") / 100
+
+            target_for_robust = st.number_input(
+                "Abatement Target for Robust Optimization",
+                value=(abatement_target_min + abatement_target_max) / 2,
+                step=5.0
+            )
+
+            if st.button("Solve Robust Optimization", type="primary"):
+                with st.spinner("Solving robust optimization (evaluating worst-case scenarios)..."):
+                    robust_optimizer = RobustOptimizer(
+                        technologies,
+                        cov_matrix,
+                        cost_uncertainty=robust_cost_unc,
+                        volatility_uncertainty=robust_vol_unc,
+                        correlation_uncertainty=robust_corr_unc
+                    )
+
+                    robust_result = robust_optimizer.solve(
+                        target_abatement=target_for_robust,
+                        budget_constraint=budget_constraint,
+                        lambda_param=lambda_param,
+                        gamma_param=gamma_param,
+                        n_scenarios=100
+                    )
+
+                # Results
+                st.markdown("#### Robust Optimization Results")
+
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Nominal Risk", f"{robust_result.nominal_risk:.3f}")
+                with col2:
+                    st.metric("Worst-Case Risk", f"{robust_result.worst_case_risk:.3f}")
+                with col3:
+                    st.metric("Robustness Gap", f"{robust_result.robustness_gap:.3f}",
+                             help="Additional risk under worst-case scenario")
+
+                # Portfolio
+                st.markdown("#### Robust Portfolio")
+                robust_df = pd.DataFrame({
+                    'Technology': [t.name for t in technologies],
+                    'Robust Weight': robust_result.portfolio.weights,
+                    'Abatement': robust_result.portfolio.weights * np.array([t.a for t in technologies])
+                })
+                st.dataframe(robust_df.style.format({'Robust Weight': '{:.2f}', 'Abatement': '{:.2f}'}))
+
+                # Comparison with nominal
+                st.markdown("#### Nominal vs Robust Comparison")
+
+                # Compute nominal solution
+                risk_model = RiskModel(technologies, cov_matrix, lambda_param=lambda_param, gamma_param=gamma_param)
+                from nz_frontier import OptimizationEngine
+                nominal_optimizer = OptimizationEngine(technologies, risk_model)
+                try:
+                    nominal_portfolio = nominal_optimizer.solve_for_target(
+                        target_for_robust, budget_constraint, lambda_param, gamma_param
+                    )
+
+                    fig, ax = plt.subplots(figsize=(10, 5))
+                    x = np.arange(n_tech)
+                    width = 0.35
+
+                    ax.bar(x - width/2, nominal_portfolio.weights, width, label='Nominal', color='steelblue')
+                    ax.bar(x + width/2, robust_result.portfolio.weights, width, label='Robust', color='coral')
+
+                    ax.set_ylabel('Capacity')
+                    ax.set_title('Nominal vs Robust Portfolio Allocation')
+                    ax.set_xticks(x)
+                    ax.set_xticklabels([t.name for t in technologies], rotation=45, ha='right')
+                    ax.legend()
+                    plt.tight_layout()
+                    st.pyplot(fig)
+                except Exception as e:
+                    st.warning(f"Could not compute nominal portfolio: {e}")
+
+        # ---------------------------------------------------------------------
+        # Tab 6: Cost Simulation
+        # ---------------------------------------------------------------------
+        with tab6:
+            st.subheader("Technology Cost Simulation")
+            st.markdown("""
+            Simulates cost evolution using the jump-diffusion with learning (Equation 22):
+
+            $$\\frac{dc_j}{c_j} = (-\\alpha_j \\cdot \\iota_j) dt + \\sigma_j dW_j + h_j dN_j$$
+
+            - **Learning**: Costs decline at rate $\\alpha_j$ (Wright's Law)
+            - **Diffusion**: Random shocks with volatility $\\sigma_j$
+            - **Jumps**: Breakthrough innovations via Poisson process
+            """)
+
+            n_sim_paths = st.number_input("Number of Simulation Paths", value=100, step=20)
+
+            if st.button("Simulate Cost Paths", type="primary"):
+                with st.spinner("Simulating cost evolution..."):
+                    sim = CostSimulator(technologies, cov_matrix)
+                    paths = sim.simulate_paths(time_horizon, dt=0.5, n_paths=int(n_sim_paths))
+
+                tech_select = st.selectbox("Select Technology to View", [t.name for t in technologies])
+
                 if tech_select:
                     tech_paths = paths[tech_select]
-                    fig4, ax4 = plt.subplots(figsize=(10, 6))
-                    # Plot first 20 paths
-                    ax4.plot(tech_paths[:20, :].T, alpha=0.3, color='gray')
-                    # Plot mean
-                    ax4.plot(np.mean(tech_paths, axis=0), 'r-', linewidth=2, label='Mean Cost')
-                    ax4.set_title(f'Cost Evolution: {tech_select} (with Learning & Jumps)')
-                    ax4.set_xlabel('Time Steps')
-                    ax4.set_ylabel('Cost ($)')
-                    ax4.legend()
-                    st.pyplot(fig4)
-        
-        with tab4:
-            st.subheader("Carbon Price Sensitivity Analysis")
-            st.markdown("Analyze how the optimal portfolio changes with increasing Carbon Price ($p_c$).")
-            
-            carbon_prices = np.linspace(0, 200, 10)
-            target_for_sensitivity = st.number_input("Abatement Target for Sensitivity", value=(abatement_target_min + abatement_target_max)/2)
-            
-            if st.button("Run Sensitivity Analysis"):
-                # We need to adjust 'a' (abatement value) based on carbon price?
-                # Or 'c' (cost) becomes c - p_c * a? 
-                # The paper says: effective abatement value a_tilde = a * (1 + p_c/p_bar)^epsilon
-                # Let's implement this logic.
-                
-                p_bar = 100.0 # Reference price
-                epsilon = 0.5 # Elasticity
-                
-                sensitivity_results = []
-                
-                for p_c in carbon_prices:
-                    # Create modified technologies
-                    mod_techs = []
-                    for t in technologies:
-                        # Modify abatement value or cost?
-                        # Usually higher carbon price makes abatement more valuable.
-                        # Let's assume it reduces effective cost: c_effective = c - p_c * a
-                        # Or increases abatement utility. 
-                        # Paper Eq (243): a_tilde = a * (1 + p_c/p_bar)^epsilon
-                        
-                        a_tilde = t.a * (1 + p_c / p_bar)**epsilon
-                        
-                        # Create copy
-                        t_mod = Technology(
-                            name=t.name, a=a_tilde, c=t.c, sigma=t.sigma, 
-                            rho=t.rho, o=t.o, tau=t.tau, 
-                            jump_intensity=t.jump_intensity, jump_size=t.jump_size, strike_price=t.strike_price,
-                            learning_rate=t.learning_rate, failure_prob=t.failure_prob, loss_given_failure=t.loss_given_failure
-                        )
-                        mod_techs.append(t_mod)
-                    
-                    # Optimize
-                    frontier_sens = EfficientFrontier(mod_techs, cov_matrix)
-                    try:
-                        # We solve for the SAME physical abatement target? 
-                        # Or target in terms of a_tilde? 
-                        # Usually target is physical tCO2. So constraint uses physical 'a'.
-                        # But objective function risk is same.
-                        # Wait, if 'a' changes, the constraint sum(w*a) >= A changes.
-                        # If p_c increases, 'a' effectively increases (value), so we need LESS capacity to meet "value" target?
-                        # No, target is physical.
-                        # Carbon price usually affects the COST function or the OPTIMALITY condition.
-                        # In this risk-min framework, p_c might not directly enter unless it affects Risk or Cost.
-                        # Let's assume p_c reduces the effective cost of technology: c_eff = c - p_c * a
-                        # But our objective is Risk Minimization, not Cost Minimization.
-                        # Cost is a constraint: sum(w*c) <= B.
-                        # So higher p_c -> effectively higher budget or lower cost?
-                        # Let's assume it relaxes the budget constraint: sum(w * (c - p_c*a)) <= B
-                        
-                        # Let's use the budget relaxation approach.
-                        
-                        # We need to pass modified costs to optimizer?
-                        # Our optimizer takes 'technologies' list.
-                        # Let's modify 'c' in mod_techs.
-                        
-                        for t_mod in mod_techs:
-                            # Effective cost can't be negative for this solver setup easily, but let's try
-                            t_mod.c = max(0.1, t_mod.c - p_c * t_mod.a * 0.5) # Scaling factor 0.5 for realism
-                        
-                        # Re-init optimizer with mod_techs
-                        # Note: We must use ORIGINAL 'a' for the physical abatement constraint if A* is physical.
-                        # But here we modified 'a' in the loop above based on paper eq.
-                        # Let's revert 'a' to physical for constraint, but keep 'c' modified.
-                        for t_mod, t_orig in zip(mod_techs, technologies):
-                            t_mod.a = t_orig.a
-                            
-                        optimizer = EfficientFrontier(mod_techs, cov_matrix).optimizer
-                        port = optimizer.solve_for_target(target_for_sensitivity, budget_constraint)
-                        sensitivity_results.append(port.weights)
-                        
-                    except Exception as e:
-                        sensitivity_results.append(np.zeros(n))
-                
-                # Plot Stacked Area
-                sensitivity_results = np.array(sensitivity_results)
-                fig5, ax5 = plt.subplots(figsize=(10, 6))
-                ax5.stackplot(carbon_prices, sensitivity_results.T, labels=[t.name for t in technologies], alpha=0.8)
-                ax5.set_xlabel('Carbon Price ($/tCO2)')
-                ax5.set_ylabel('Optimal Capacity (GW)')
-                ax5.set_title('Portfolio Sensitivity to Carbon Price')
-                ax5.legend(loc='upper left')
-                st.pyplot(fig5)
+
+                    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+                    # Path plot
+                    ax1 = axes[0]
+                    time_steps = np.arange(tech_paths.shape[1]) * 0.5
+
+                    # Plot sample paths
+                    for i in range(min(30, tech_paths.shape[0])):
+                        ax1.plot(time_steps, tech_paths[i, :], alpha=0.2, color='gray', linewidth=0.8)
+
+                    # Mean and percentiles
+                    mean_path = np.mean(tech_paths, axis=0)
+                    p10 = np.percentile(tech_paths, 10, axis=0)
+                    p90 = np.percentile(tech_paths, 90, axis=0)
+
+                    ax1.fill_between(time_steps, p10, p90, alpha=0.3, color='steelblue', label='80% CI')
+                    ax1.plot(time_steps, mean_path, 'r-', linewidth=2.5, label='Expected Cost')
+
+                    ax1.set_xlabel('Years', fontsize=11)
+                    ax1.set_ylabel('Cost ($/unit)', fontsize=11)
+                    ax1.set_title(f'Cost Evolution: {tech_select}', fontsize=12)
+                    ax1.legend()
+                    ax1.grid(True, alpha=0.3)
+
+                    # Terminal distribution
+                    ax2 = axes[1]
+                    terminal_costs = tech_paths[:, -1]
+                    ax2.hist(terminal_costs, bins=30, color='steelblue', edgecolor='black', alpha=0.7)
+                    ax2.axvline(np.mean(terminal_costs), color='red', linestyle='--', linewidth=2, label=f'Mean: {np.mean(terminal_costs):.1f}')
+                    ax2.axvline(np.percentile(terminal_costs, 10), color='orange', linestyle=':', linewidth=2, label=f'10th %ile: {np.percentile(terminal_costs, 10):.1f}')
+                    ax2.set_xlabel('Terminal Cost ($/unit)', fontsize=11)
+                    ax2.set_ylabel('Frequency', fontsize=11)
+                    ax2.set_title(f'Terminal Cost Distribution (Year {time_horizon})', fontsize=12)
+                    ax2.legend()
+
+                    plt.tight_layout()
+                    st.pyplot(fig)
+
+                    # Statistics
+                    st.markdown("#### Simulation Statistics")
+                    initial_cost = tech_paths[0, 0]
+                    stats = {
+                        'Initial Cost': initial_cost,
+                        'Expected Terminal Cost': np.mean(terminal_costs),
+                        'Cost Reduction (%)': (1 - np.mean(terminal_costs) / initial_cost) * 100,
+                        'Terminal Std Dev': np.std(terminal_costs),
+                        'Terminal 10th Percentile': np.percentile(terminal_costs, 10),
+                        'Terminal 90th Percentile': np.percentile(terminal_costs, 90),
+                    }
+                    stats_df = pd.DataFrame([stats]).T
+                    stats_df.columns = ['Value']
+                    st.dataframe(stats_df.style.format({'Value': '{:.2f}'}))
 
     except Exception as e:
         st.error(f"Error processing data: {e}")
+        import traceback
+        st.code(traceback.format_exc())
+
 else:
     st.info("Please upload a CSV file or select a preset case to begin.")
+
+    st.markdown("""
+    ### CSV Format
+    Your CSV should include the following columns:
+
+    | Column | Description | Required |
+    |--------|-------------|----------|
+    | `name` | Technology name | Yes |
+    | `a` | Abatement potential (tCO₂/unit) | Yes |
+    | `c` | Capital cost ($/unit) | Yes |
+    | `sigma` | Cost volatility | Yes |
+    | `rho` | Correlation factor | No |
+    | `o` | Embedded option value | No |
+    | `tau` | Capital lifetime (years) | No |
+    | `jump_intensity` | Poisson intensity for breakthroughs | No |
+    | `jump_size` | Jump size (negative = cost reduction) | No |
+    | `learning_rate` | Learning curve rate (α) | No |
+    | `failure_prob` | Technology failure probability | No |
+    | `loss_given_failure` | Loss given failure ($/unit) | No |
+    """)
