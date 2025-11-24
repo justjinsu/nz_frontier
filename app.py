@@ -11,6 +11,12 @@ This application implements the complete theoretical framework from paper_v2.tex
 Author: Jinsu Park, PLANiT Institute
 """
 
+import sys
+import os
+
+# Add the current directory to path for Streamlit Cloud deployment
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import streamlit as st
 import pandas as pd
 import numpy as np
