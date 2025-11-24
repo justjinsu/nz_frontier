@@ -1,3 +1,13 @@
+"""
+Net-Zero Frontier: Portfolio Theory for Corporate Decarbonization
+
+A risk-efficiency framework for net-zero investment under uncertainty,
+extending modern portfolio theory (Markowitz, 1952) to climate transition.
+"""
+
+__version__ = "0.1.0"
+__author__ = "Jinsu Park"
+
 try:
     from .types import Technology, Portfolio, RiskBreakdown, FrontierPoint
     from .risk import RiskModel
@@ -22,15 +32,20 @@ except ImportError as e:
     raise
 
 __all__ = [
+    # Version info
+    "__version__",
+    "__author__",
+    # Core types
     "Technology",
     "Portfolio",
+    "RiskBreakdown",
+    "FrontierPoint",
+    # Core modules
     "RiskModel",
     "OptimizationEngine",
     "CostSimulator",
     "EfficientFrontier",
     "DynamicOptimizer",
-    "RiskBreakdown",
-    "FrontierPoint",
     # Advanced modules
     "MonteCarloFrontier",
     "MonteCarloFrontierResult",
