@@ -705,46 +705,57 @@ We apply our framework to South Korea, a particularly instructive case due to th
 
 \subsection{Korean Steel Sector}
 
-South Korea is home to POSCO (the world's 7th largest steel producer) and Hyundai Steel, with combined crude steel production exceeding 55 million tonnes annually. In 2023, POSCO's Scope 1\&2 emissions were 71.97 Mt CO$_2$ with an intensity of 2.02 tCO$_2$/tcs, while Hyundai Steel emitted 29.27 Mt CO$_2$ at 1.43 tCO$_2$/tcs intensity \citep{posco2023sustainability}.
+South Korea is home to POSCO (the world's 6th largest steel producer) and Hyundai Steel, with combined crude steel production exceeding 55 million tonnes annually. In 2024, POSCO's Scope 1\&2 emissions were 71.07 Mt CO$_2$ with an intensity of 2.02 tCO$_2$/tcs, showing marginal improvement from 2.05 tCO$_2$/tcs in 2021-2022. Hyundai Steel emitted approximately 29 Mt CO$_2$ at 1.43 tCO$_2$/tcs intensity \citep{posco2023sustainability}.
+
+\paragraph{HyREX Technology Progress (2024-2025)}
+A significant development occurred in April 2024 when POSCO succeeded in producing molten iron from its HyREX pilot facility at Pohang Steel Works. The facility, manufacturing up to 24 tons of molten iron daily, emits only 0.4 tCO$_2$/t---meeting the IEA's near-zero threshold. In October 2025, POSCO and BHP signed a landmark agreement to construct a 300,000 ton/year demonstration plant, with commissioning expected by early 2028 and commercial operation targeted for 2030.
+
+\paragraph{Hy-Cube Development (Hyundai Steel)}
+Hyundai Steel's Hy-Cube (Hy$^3$) system integrates the proprietary ``Hy-Arc'' electric furnace with H$_2$-DRI technology. In 2025, Hyundai announced a \$6 billion hydrogen-powered DRI-EAF steel mill in Louisiana, USA, initially using blue hydrogen with transition to green hydrogen expected post-2034.
 
 \paragraph{Technology Portfolio}
-Korean steelmakers face a choice among several decarbonization pathways:
+Korean steelmakers face a choice among several decarbonization pathways. Cost parameters reflect 2024-2025 industry estimates based on Global Efficiency Intelligence and IEA data:
 
 \begin{table}[H]
 \centering
-\caption{Korean Steel Sector Technology Parameters}
+\caption{Korean Steel Sector Technology Parameters (2024-2025 Estimates)}
 \label{tab:korea_steel}
 \begin{tabular}{lcccccc}
 \toprule
 Technology & $a_j$ & $c_j$ & $\sigma_j$ & $\alpha_j$ & $\pi_j$ & $\tau_j$ \\
  & (tCO$_2$/t) & (\$/t) & & & & (years) \\
 \midrule
-BF-BOF (Baseline) & 0.0 & 605 & 0.05 & 0.01 & 0.02 & 40 \\
-BF-BOF + CCUS & 1.4 & 720 & 0.18 & 0.08 & 0.08 & 25 \\
-Scrap-EAF & 1.0 & 580 & 0.12 & 0.05 & 0.03 & 25 \\
-HyREX H$_2$-DRI (POSCO) & 1.9 & 800 & 0.30 & 0.20 & 0.10 & 30 \\
-Hy-Cube H$_2$-DRI (Hyundai) & 1.85 & 780 & 0.28 & 0.18 & 0.12 & 30 \\
-EAF + Green H$_2$ DRI & 2.0 & 850 & 0.35 & 0.22 & 0.15 & 30 \\
-Molten Oxide Electrolysis & 2.1 & 1200 & 0.45 & 0.28 & 0.20 & 35 \\
+BF-BOF (Baseline) & 0.0 & 390 & 0.05 & 0.01 & 0.02 & 40 \\
+BF-BOF + CCUS & 1.60 & 465 & 0.15 & 0.06 & 0.06 & 25 \\
+Scrap-EAF & 1.54 & 415 & 0.10 & 0.05 & 0.03 & 25 \\
+NG-DRI-EAF & 1.25 & 455 & 0.12 & 0.08 & 0.04 & 25 \\
+HyREX H$_2$-DRI (POSCO) & 1.96 & 616 & 0.25 & 0.18 & 0.08 & 30 \\
+Hy-Cube H$_2$-DRI (Hyundai) & 1.94 & 600 & 0.24 & 0.16 & 0.10 & 30 \\
+EAF + Green H$_2$ DRI & 2.00 & 680 & 0.28 & 0.20 & 0.12 & 30 \\
+Molten Oxide Electrolysis & 2.15 & 950 & 0.40 & 0.25 & 0.18 & 35 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\noindent\textit{Notes:} Abatement $a_j$ represents CO$_2$ reduction relative to BF-BOF baseline (2.2 tCO$_2$/t). Costs $c_j$ are levelized cost of steel (LCOS) in \$/ton at current hydrogen prices (\$3-5/kg). Green H$_2$-DRI costs assume hydrogen at \$5/kg; at \$1.5/kg, costs approach \$490/t. Learning rates $\alpha_j$ follow \citet{rubin2015technical} for mature technologies and \citet{nagy2013statistical} for emerging technologies.
 
 \paragraph{Key Findings}
 Applying our framework reveals several insights:
 
 \begin{enumerate}[label=(\roman*)]
-    \item \textbf{High correlation risk}: Both POSCO's HyREX and Hyundai's Hy-Cube technologies depend on green hydrogen availability, creating $\rho_{jk} \approx 0.4$ correlation. This concentration increases portfolio variance.
+    \item \textbf{High correlation risk}: Both POSCO's HyREX and Hyundai's Hy-Cube technologies depend on green hydrogen availability, creating $\rho_{jk} \approx 0.45$ correlation. This concentration increases portfolio variance. The Hyundai Motor Group projects hydrogen off-take of 3 million tonnes/year by 2035, indicating significant demand correlation across affiliates.
 
-    \item \textbf{Investment gap as risk factor}: Korea has allocated only 268.5 billion won (\$193M) in government subsidies versus POSCO's stated need of 20 trillion won (\$14.8B). This policy uncertainty manifests as higher $\sigma_j$ for hydrogen-based technologies.
+    \item \textbf{Investment gap as risk factor}: Korea has allocated only KRW 268.5 billion (\$198M) in government subsidies for 2023-2025, versus POSCO's stated need of KRW 20 trillion (\$14.8B) for HyREX commercialization. Germany, producing less than half Korea's steel output, invests approximately 38$\times$ more public funding. This policy uncertainty manifests as higher $\sigma_j$ for hydrogen-based technologies.
 
-    \item \textbf{Timeline disadvantage}: Sweden's H$_2$-DRI comes online in 2025, Germany/US in 2026, but Korea's first H$_2$-DRI is projected post-2035. This 10-year lag increases stranded asset risk for existing blast furnaces ($\sqrt{\tau} \cdot \sigma$ term in equation \ref{eq:stranded}).
+    \item \textbf{Green premium sensitivity}: At current hydrogen prices (\$3-5/kg), the green premium for H$_2$-DRI steel is approximately \$263/ton versus BF-BOF. However, at \$1.5/kg hydrogen (projected 2030 in favorable regions), green H$_2$-DRI-EAF becomes cost-competitive with BF-BOF at \$15/tCO$_2$ carbon pricing.
 
-    \item \textbf{EAF as risk-efficient bridge}: Scrap-EAF offers moderate abatement ($a = 1.0$) with lower volatility ($\sigma = 0.12$) and higher option value from modularity. POSCO's 2.5 Mt EAF at Gwangyang represents this strategy.
+    \item \textbf{Timeline disadvantage}: SSAB's HYBRIT delivers commercial fossil-free steel in 2026, H2 Green Steel (Stegra) targets 5 Mt/year by 2030, but Korea's HyREX demonstration plant commissioning is expected in 2028 with commercial scale post-2030. This 4-6 year lag increases stranded asset risk for existing blast furnaces ($\sqrt{\tau} \cdot \sigma$ term in equation \ref{eq:stranded}).
+
+    \item \textbf{EAF as risk-efficient bridge}: Scrap-EAF offers 1.54 tCO$_2$/t abatement (72\% reduction) with lower volatility ($\sigma = 0.10$) and higher option value from modularity. BF-BOF produces 2.2 tCO$_2$/t while Scrap-EAF produces 0.66 tCO$_2$/t. POSCO's 2.5 Mt EAF expansion at Gwangyang and investment of \$140M in scrap collection infrastructure (2023-2025) exemplifies this hedging strategy.
 \end{enumerate}
 
 \paragraph{Optimal Portfolio Implications}
-For a target of 50\% emissions reduction by 2030, our model suggests a diversified portfolio emphasizing EAF expansion (40-50\% weight) with selective CCUS deployment (20-30\%) as a bridge technology, while maintaining modest H$_2$-DRI investment (15-25\%) to capture learning curve benefits despite higher uncertainty.
+For a target of 50\% emissions reduction by 2030, our model suggests a diversified portfolio emphasizing EAF expansion (35-45\% weight) with selective CCUS deployment (20-30\%) as a bridge technology, while maintaining H$_2$-DRI investment (20-30\%) to capture learning curve benefits. The NG-DRI-EAF pathway (10-15\%) serves as a transitional technology enabling infrastructure development for future green hydrogen integration.
 
 \subsection{Korean Energy Sector}
 

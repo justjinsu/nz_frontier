@@ -90,17 +90,27 @@ print(f"90% CI: [{result.percentile_5}, {result.percentile_95}]")
 
 ## Case Studies
 
-### Korean Steel Industry
+### Korean Steel Industry (Updated 2024-2025)
 
-The repository includes calibrated data for South Korea's steel sector:
+The repository includes research-calibrated data for South Korea's steel sector based on POSCO Sustainability Reports, Global Efficiency Intelligence, and IEA data:
 
 | Technology | Abatement (tCO₂/t) | Cost ($/t) | Volatility | Learning Rate |
 |------------|-------------------|------------|------------|---------------|
-| BF-BOF (Baseline) | 0.0 | 605 | 0.05 | 0.01 |
-| BF-BOF + CCUS | 1.4 | 720 | 0.18 | 0.08 |
-| Scrap-EAF | 1.0 | 580 | 0.12 | 0.05 |
-| HyREX H2-DRI (POSCO) | 1.9 | 800 | 0.30 | 0.20 |
-| Hy-Cube H2-DRI (Hyundai) | 1.85 | 780 | 0.28 | 0.18 |
+| BF-BOF (Baseline) | 0.0 | 390 | 0.05 | 0.01 |
+| BF-BOF + CCUS | 1.60 | 465 | 0.15 | 0.06 |
+| Scrap-EAF | 1.54 | 415 | 0.10 | 0.05 |
+| NG-DRI-EAF | 1.25 | 455 | 0.12 | 0.08 |
+| HyREX H2-DRI (POSCO) | 1.96 | 616 | 0.25 | 0.18 |
+| Hy-Cube H2-DRI (Hyundai) | 1.94 | 600 | 0.24 | 0.16 |
+
+**Key 2024-2025 Developments:**
+- **POSCO HyREX**: Pilot success (April 2024) producing 24 tons/day at 0.4 tCO₂/t; BHP partnership for 300kt demo plant (October 2025)
+- **Hyundai Hy-Cube**: $6B Louisiana plant announced using blue → green H2 transition
+- **Green Premium**: ~$263/ton at H2 price $5/kg; cost-competitive at $1.5/kg with $15/tCO₂ carbon price
+
+### Global Steel Comparison
+
+Includes major green steel initiatives: HYBRIT (Sweden), H2 Green Steel/Stegra, ArcelorMittal, SALCOS (Germany), Nucor (US), and Asian projects.
 
 ### Korean Energy Sector
 
@@ -152,12 +162,33 @@ Technology B,2.0,150,0.3,0.0,15,25,0.08,-0.2,0.20,0.08,120
 | `failure_prob` | Technology failure probability |
 | `loss_given_failure` | Loss given failure ($/unit) |
 
+## Data Sources
+
+Technology parameters are calibrated from peer-reviewed literature and industry reports. See [`data/DATA_SOURCES.md`](data/DATA_SOURCES.md) for complete methodology.
+
+**Primary Sources:**
+- [POSCO Sustainability Report 2023-2024](https://sustainability.posco.com)
+- [Global Efficiency Intelligence - Green Steel Economics](https://www.globalefficiencyintel.com/green-steel-economics)
+- [Transition Asia - Green Steel Factsheets](https://transitionasia.org/greensteeleconomics_es/)
+- [IEA Global Hydrogen Review 2024](https://www.iea.org/reports/global-hydrogen-review-2024)
+- [Columbia Business School CKI Steel Reports](https://business.columbia.edu/insights/climate/cki/steel)
+
 ## References
 
+### Theoretical Foundations
 - Markowitz, H. (1952). Portfolio Selection. *Journal of Finance*, 7(1), 77-91.
 - Dixit, A. K., & Pindyck, R. S. (1994). *Investment under Uncertainty*. Princeton University Press.
 - Arrow, K. J. (1962). The Economic Implications of Learning by Doing. *Review of Economic Studies*, 29(3), 155-173.
+
+### Steel Decarbonization
 - Vogl, V., Åhman, M., & Nilsson, L. J. (2018). Assessment of hydrogen direct reduction for fossil-free steelmaking. *Journal of Cleaner Production*, 203, 736-745.
+- Rubin, E. S., et al. (2015). A review of learning rates for electricity supply technologies. *Energy Policy*, 86, 198-218.
+- Nagy, B., et al. (2013). Statistical basis for predicting technological progress. *PLoS ONE*, 8(2), e52669.
+
+### Industry Reports
+- POSCO Newsroom (2024). [HyREX Pilot Success](https://newsroom.posco.com/en/from-ccus-to-hyrex-the-full-lineup-of-posco-groups-decarbonization-strategies-for-a-sustainable-steel-industry/)
+- For Our Climate (2024). [Korea Steel Investment Gap Analysis](https://forourclimate.org/research/521)
+- GMK Center (2024). [Green Steel in South Korea](https://gmk.center/en/posts/prospects-for-south-korean-green-steel/)
 
 ## Citation
 

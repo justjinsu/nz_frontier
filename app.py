@@ -64,8 +64,9 @@ st.sidebar.header("Configuration")
 # 1. Data Source
 data_source = st.sidebar.radio(
     "Data Source",
-    ["Preset Case: Korea Steel", "Preset Case: Korea Energy",
-     "Preset Case: Steel", "Preset Case: Petrochemical", "Upload CSV"]
+    ["Preset Case: Korea Steel", "Preset Case: Global Steel",
+     "Preset Case: Korea Energy", "Preset Case: Steel",
+     "Preset Case: Petrochemical", "Upload CSV"]
 )
 
 df = None
@@ -79,6 +80,8 @@ elif data_source == "Preset Case: Petrochemical":
     df = pd.read_csv("data/petrochemical.csv")
 elif data_source == "Preset Case: Korea Steel":
     df = pd.read_csv("data/korea_steel.csv")
+elif data_source == "Preset Case: Global Steel":
+    df = pd.read_csv("data/global_steel.csv")
 elif data_source == "Preset Case: Korea Energy":
     df = pd.read_csv("data/korea_energy.csv")
 
