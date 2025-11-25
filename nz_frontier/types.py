@@ -6,7 +6,7 @@ from typing import List, Optional
 class Technology:
     """
     Represents a low-carbon technology with its characteristics.
-    
+
     Attributes:
         name: Name of the technology
         a: Abatement potential per unit capacity (tCO2/unit)
@@ -15,6 +15,7 @@ class Technology:
         rho: Technology-specific risk correlation (with other factors or market)
         o: Embedded option value
         tau: Technology maturity timeline (years)
+        max_capacity: Maximum deployable capacity (Mt/year) - realistic constraint
     """
     name: str
     a: float
@@ -32,6 +33,8 @@ class Technology:
     learning_rate: float = 0.0   # alpha for learning curve
     failure_prob: float = 0.0    # pi for stranded asset risk
     loss_given_failure: float = 0.0 # L for stranded asset risk
+    # Capacity Constraints
+    max_capacity: float = float('inf')  # Maximum capacity (Mt/year)
 
 @dataclass
 class Portfolio:

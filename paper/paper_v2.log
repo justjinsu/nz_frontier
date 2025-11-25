@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  24 NOV 2025 11:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  25 NOV 2025 11:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -516,45 +516,117 @@ Overfull \hbox (2.60252pt too wide) in paragraph at lines 140--141
  ren-der equip-ment non-compliant ([]Calde-
  []
 
-[4] [5] [6] [7] [8] [9] [10] [11] [12]
-Overfull \hbox (4.82227pt too wide) in paragraph at lines 589--590
+[4] [5] [6] [7]
+
+LaTeX Warning: Reference `eq:nonneg' on page 8 undefined on input line 293.
+
+
+LaTeX Warning: Reference `eq:nonneg' on page 8 undefined on input line 326.
+
+[8] [9] [10] [11] [12]
+Overfull \hbox (4.82227pt too wide) in paragraph at lines 592--593
 []\OT1/cmr/bx/n/12 Proposition 4 \OT1/cmr/m/n/12 (Car-bon Price Sen-si-tiv-ity)
 \OT1/cmr/bx/n/12 . \OT1/cmr/m/it/12 The op-ti-mal port-fo-lio shifts to-ward hi
 gh-abatement
  []
 
 [13]
-Overfull \hbox (14.76692pt too wide) in paragraph at lines 669--680
+Overfull \hbox (14.76692pt too wide) in paragraph at lines 672--683
  [][] 
  []
 
 [14]
 
 Package natbib Warning: Citation `levi2020decarbonization' on page 15 undefined
- on input line 693.
+ on input line 696.
 
-[15] [16] [17] [18]
-Overfull \hbox (7.37706pt too wide) in paragraph at lines 857--858
+[15] [16] [17] [18] [19]
+<figure1_posco_frontier.pdf, id=750, 425.84807pt x 281.89752pt>
+File: figure1_posco_frontier.pdf Graphic file (type pdf)
+<use figure1_posco_frontier.pdf>
+Package pdftex.def Info: figure1_posco_frontier.pdf  used on input line 874.
+(pdftex.def)             Requested size: 328.82707pt x 217.67256pt.
+ [20]
+<figure2_optimal_portfolio.pdf, id=764, 715.34378pt x 281.60205pt>
+File: figure2_optimal_portfolio.pdf Graphic file (type pdf)
+<use figure2_optimal_portfolio.pdf>
+Package pdftex.def Info: figure2_optimal_portfolio.pdf  used on input line 909.
+
+(pdftex.def)             Requested size: 469.75502pt x 184.92978pt.
+ [21 <./figure1_posco_frontier.pdf>]
+<figure3_h2_sensitivity.pdf, id=829, 715.07655pt x 281.60205pt>
+File: figure3_h2_sensitivity.pdf Graphic file (type pdf)
+<use figure3_h2_sensitivity.pdf>
+Package pdftex.def Info: figure3_h2_sensitivity.pdf  used on input line 938.
+(pdftex.def)             Requested size: 469.75502pt x 184.99423pt.
+ [22 <./figure2_optimal_portfolio.pdf>]
+Overfull \hbox (3.90453pt too wide) in paragraph at lines 970--980
+ [][] 
+ []
+
+[23 <./figure3_h2_sensitivity.pdf>]
+<figure4_transition_pathway.pdf, id=966, 568.00745pt x 318.03253pt>
+File: figure4_transition_pathway.pdf Graphic file (type pdf)
+<use figure4_transition_pathway.pdf>
+Package pdftex.def Info: figure4_transition_pathway.pdf  used on input line 986
+.
+(pdftex.def)             Requested size: 399.29463pt x 223.56754pt.
+ [24 <./figure4_transition_pathway.pdf>]
+[25]
+Overfull \hbox (7.37706pt too wide) in paragraph at lines 1063--1064
 \OT1/cmr/m/n/12 ir-re-versibil-ity, learn-ing, and deep un-cer-tainty. This pa-
 per pro-vides such a frame-work, grounded
  []
 
-[19] [20] [21] [22]
+[26]
+Underfull \hbox (badness 3471) in paragraph at lines 1103--1107
+[]\OT1/cmr/m/n/12 Boston Con-sult-ing Group. (2024).  Short-falls in scrap will
+ chal-lenge the steel
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1103--1107
+\OT1/cmr/m/n/12 in-dus-try.  \OT1/cmr/m/it/12 BCG Pub-li-ca-tions\OT1/cmr/m/n/1
+2 . []$\OT1/cmtt/m/n/12 https : / / www . bcg . com / publications / 2024 /
+ []
+
+
+Underfull \hbox (badness 2150) in paragraph at lines 1103--1107
+\OT1/cmtt/m/n/12 shortfalls-[]in-[]scrap-[]will-[]challenge-[]steel-[]industry$
+[]  \OT1/cmr/m/n/12 IEA/EET Work-ing Pa-
+ []
+
+[27] [28]
+Underfull \hbox (badness 4467) in paragraph at lines 1299--1302
+[]\OT1/cmr/m/n/12 OECD. (2024).  Cir-cu-lar econ-omy poli-cies for steel de-car
+-bon-i-sa-tion.  \OT1/cmr/m/it/12 OECD
+ []
+
+
+Underfull \hbox (badness 6944) in paragraph at lines 1299--1302
+\OT1/cmr/m/it/12 En-vi-ron-ment Pol-icy Pa-pers\OT1/cmr/m/n/12 , No. 42. []$\OT
+1/cmtt/m/n/12 https : / / www . oecd . org / en / publications /
+ []
+
+[29]
 
 Package natbib Warning: There were undefined citations.
 
-[23] (./paper_v2.aux)
+[30] (./paper_v2.aux)
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `paper_v2.out' has not changed.
-(rerunfilecheck)             Checksum: 113EC33673C2BBBB19B34130062DA9C4;8867.
+(rerunfilecheck)             Checksum: 6DB611616B2BA6F8D5DA5DFFDC1638B3;10887.
  ) 
 Here is how much of TeX's memory you used:
- 12093 strings out of 476025
- 190718 string characters out of 5790018
+ 12202 strings out of 476025
+ 192732 string characters out of 5790018
  1865388 words of memory out of 5000000
- 32126 multiletter control sequences out of 15000+600000
- 528505 words of font info for 90 fonts, out of 8000000 for 9000
+ 32179 multiletter control sequences out of 15000+600000
+ 530235 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,76p,1195b,671s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,76p,1195b,669s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -574,13 +646,14 @@ ve/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive
 /2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/
 2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/20
 23/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/202
-3/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive
-/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2
-023/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on paper_v2.pdf (23 pages, 371311 bytes).
+3/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive
+/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/tex
+live/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texli
+ve/2023/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on paper_v2.pdf (30 pages, 470447 bytes).
 PDF statistics:
- 882 PDF objects out of 1000 (max. 8388607)
- 804 compressed objects within 9 object streams
- 257 named destinations out of 1000 (max. 500000)
- 345 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1240 PDF objects out of 1440 (max. 8388607)
+ 946 compressed objects within 10 object streams
+ 304 named destinations out of 1000 (max. 500000)
+ 445 words of extra memory for PDF output out of 10000 (max. 10000000)
 

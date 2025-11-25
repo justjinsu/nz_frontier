@@ -134,7 +134,8 @@ def load_technologies(df: pd.DataFrame) -> list:
             strike_price=row.get('strike_price', 0.0),
             learning_rate=row.get('learning_rate', 0.0),
             failure_prob=row.get('failure_prob', 0.0),
-            loss_given_failure=row.get('loss_given_failure', 0.0)
+            loss_given_failure=row.get('loss_given_failure', 0.0),
+            max_capacity=row.get('max_capacity', float('inf'))
         )
         techs.append(t)
     return techs

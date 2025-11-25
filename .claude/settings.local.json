@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(pdflatex:*)",
+      "WebSearch",
+      "Bash(python:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pdfinfo:*)",
+      "Bash(/dev/null)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

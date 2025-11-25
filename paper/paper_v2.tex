@@ -157,7 +157,7 @@ Consider a firm facing a mandatory abatement target $A^*$ over horizon $T$. The 
 \begin{definition}[Technology Characteristics]
 Each technology $j \in \mathcal{T}$ is characterized by the tuple:
 \begin{equation}
-\Theta_j = (a_j, c_j, \sigma_j, \rho_{jk}, \pi_j, L_j, \alpha_j, o_j, \tau_j)
+\Theta_j = (a_j, c_j, \sigma_j, \rho_{jk}, \pi_j, L_j, \alpha_j, o_j, \tau_j, \bar{w}_j)
 \end{equation}
 where:
 \begin{itemize}
@@ -170,10 +170,13 @@ where:
     \item $\alpha_j \in [0,1]$: Learning rate (cost reduction per doubling)
     \item $o_j \in \R_+$: Embedded option value (\$/unit)
     \item $\tau_j \in \R_+$: Capital lifetime (years)
+    \item $\bar{w}_j \in \R_+$: Maximum deployable capacity constraint (Mt/year)
 \end{itemize}
 \end{definition}
 
 The parameters are grounded in empirical literature. Following \citet{rubin2015technical}, we calibrate $\sigma_j \in [0.05, 0.40]$ based on historical cost volatility. Learning rates $\alpha_j$ follow \citet{mcdonald2001learning}: mature technologies (blast furnace) have $\alpha \approx 0.01$, while emerging technologies (electrolysis) have $\alpha \approx 0.25$. Failure probabilities derive from \citet{kern2012technological}'s analysis of technology lock-in.
+
+\textbf{Capacity Constraints.} The maximum capacity bounds $\bar{w}_j$ reflect real-world deployment constraints critical for realistic optimization. For scrap-based electric arc furnaces (EAF), $\bar{w}_j$ is limited by domestic and regional scrap steel availability---studies show global scrap can only supply 25-50\% of projected 2050 steel demand even with perfect circular economy implementation \citep{bcg2024scrap, oecd2024circular}. For hydrogen-based direct reduction (H$_2$-DRI), constraints arise from electrolyzer manufacturing capacity, hydrogen pipeline infrastructure, and renewable energy availability. For carbon capture and storage (CCS), geological storage capacity and CO$_2$ transport infrastructure impose regional limits. Ignoring these constraints leads to infeasible portfolios dominated by single low-risk technologies with unbounded deployment.
 
 \begin{assumption}[Technology Availability]
 \label{assum:tech}
@@ -266,7 +269,7 @@ The firm solves:
 \min_{\bm{w} \in \R^N_+} \quad & R_P(\bm{w}) \label{eq:obj}\\
 \text{subject to} \quad & \sum_{j=1}^N w_j a_j \geq A^* \quad \text{(Abatement constraint)} \label{eq:abate}\\
 & \sum_{j=1}^N w_j c_j \leq B \quad \text{(Budget constraint)} \label{eq:budget}\\
-& \bm{w} \geq \bm{0} \quad \text{(Non-negativity)} \label{eq:nonneg}
+& 0 \leq w_j \leq \bar{w}_j, \; \forall j \quad \text{(Capacity bounds)} \label{eq:capacity}
 \end{align}
 
 This formulation differs from standard portfolio optimization in that the firm does not maximize expected return but rather minimizes risk subject to meeting a mandatory abatement target. This reflects the regulatory nature of decarbonization: emissions reduction is not optional but required by net-zero commitments, carbon pricing, or direct regulation.
@@ -1095,6 +1098,11 @@ Arrow, K. J., \& Fisher, A. C. (1974).
 \bibitem[Awerbuch \& Berger(2006)]{awerbuch2006applying}
 Awerbuch, S., \& Berger, M. (2006).
 \newblock Applying portfolio theory to EU electricity planning and policy-making.
+
+\bibitem[BCG(2024)]{bcg2024scrap}
+Boston Consulting Group. (2024).
+\newblock Shortfalls in scrap will challenge the steel industry.
+\newblock \emph{BCG Publications}. \url{https://www.bcg.com/publications/2024/shortfalls-in-scrap-will-challenge-steel-industry}
 \newblock IEA/EET Working Paper.
 
 \bibitem[Barnett(2020)]{barnett2020pricing}
@@ -1286,6 +1294,11 @@ Nordhaus, W. D. (1994).
 Nordhaus, W. D. (2014).
 \newblock The perils of the learning model for modeling endogenous technological change.
 \newblock \emph{Energy Journal}, 35(1), 1--13.
+
+\bibitem[OECD(2024)]{oecd2024circular}
+OECD. (2024).
+\newblock Circular economy policies for steel decarbonisation.
+\newblock \emph{OECD Environment Policy Papers}, No. 42. \url{https://www.oecd.org/en/publications/circular-economy-policies-for-steel-decarbonisation_4cfb485d-en.html}
 
 \bibitem[Pfeiffer et al.(2016)]{pfeiffer2016committed}
 Pfeiffer, A., Millar, R., Hepburn, C., \& Beinhocker, E. (2016).

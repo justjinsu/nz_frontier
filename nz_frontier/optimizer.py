@@ -15,6 +15,7 @@ class OptimizationEngine:
         self.n_tech = len(technologies)
         self.abatements = np.array([t.a for t in technologies])
         self.costs = np.array([t.c for t in technologies])
+        self.max_capacities = np.array([t.max_capacity for t in technologies])
 
     def _build_constraints(self, target_abatement: float, budget_constraint: Optional[float]) -> List[dict]:
         constraints = [
@@ -50,8 +51,8 @@ class OptimizationEngine:
 
         constraints = self._build_constraints(target_abatement, budget_constraint)
 
-        # Bounds (w >= 0)
-        bounds = tuple((0, None) for _ in range(self.n_tech))
+        # Bounds (0 <= w <= max_capacity for each technology)
+        bounds = tuple((0, cap) for cap in self.max_capacities)
 
         # Initial guess (distribute target equally among techs, roughly)
         if initial_guess is None:
