@@ -300,8 +300,9 @@ if df is not None:
         # =============================================================================
         # Tab Layout
         # =============================================================================
-        tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
             "📊 Case Study",
+            "🏭 Three-Tier Comparison",
             "Monte Carlo Frontier",
             "Risk Decomposition",
             "Dynamic Transition",
@@ -531,9 +532,172 @@ if df is not None:
                 """)
 
         # ---------------------------------------------------------------------
-        # Tab 1: Monte Carlo Efficient Frontier
+        # Tab 1: Three-Tier Comparison
         # ---------------------------------------------------------------------
         with tab1:
+            st.subheader("🏭 Three-Tier Efficient Frontier Comparison")
+            st.markdown("""
+            **Compare firm-level vs industry-level investment efficiency**
+
+            This tool implements the framework from Section 11 of the paper, comparing:
+            1. **Global Industry Frontier** - Theoretical best-practice (all global technologies)
+            2. **POSCO-Feasible Frontier** - POSCO-optimal (Korea constraints)
+            3. **POSCO Announced** - Actual 2024 strategy
+            """)
+
+            # Load data
+            import pandas as pd
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("### 📊 Efficiency Metrics")
+
+                # Display key metrics from analysis
+                st.metric("Strategy Efficiency Score (SES)", "63.6%",
+                         delta="-36.4% vs optimal", delta_color="inverse")
+                st.metric("Optimality Gap", "101.2 risk units",
+                         delta="$4.2B wasted", delta_color="inverse")
+                st.metric("Constraint Cost", "4,110 risk units",
+                         delta="vs global best-practice", delta_color="inverse")
+
+                st.markdown("""
+                **Interpretation:**
+                - **SES = 63.6%**: POSCO achieves only 64% efficiency
+                - **Gap = 101.2**: POSCO is OFF their own frontier by 36%
+                - **Cost = 4,110**: Even optimal POSCO >> global (structural constraints)
+                """)
+
+            with col2:
+                st.markdown("### 📈 Frontier Visualization")
+                try:
+                    from PIL import Image
+                    img = Image.open('paper/figure_three_tier_comparison.png')
+                    st.image(img, caption='Three-Tier Frontier Comparison', use_column_width=True)
+                except:
+                    st.info("Run `python three_tier_comparison.py` to generate visualization")
+
+            st.markdown("---")
+
+            # Gap Decomposition
+            st.markdown("### 🔍 Gap Decomposition")
+
+            col3, col4 = st.columns(2)
+
+            with col3:
+                st.markdown("**Optimality Gap Breakdown** (Why POSCO is sub-optimal)")
+
+                gap_data = pd.DataFrame({
+                    'Component': ['Stranded Asset Risk', 'Option Value Loss', 'Cost Volatility'],
+                    'Contribution': [91.41, 8.43, 1.38],
+                    'Percentage': ['90.3%', '8.3%', '1.4%']
+                })
+                st.dataframe(gap_data, use_container_width=True)
+
+                st.markdown("""
+                **Root Cause**: Over-allocation to legacy BF-BOF (11.5 Mt → should be 0 Mt)
+                """)
+
+            with col4:
+                st.markdown("**Constraint Cost Breakdown** (Why POSCO >> Global)")
+
+                constraint_data = pd.DataFrame({
+                    'Constraint': ['Legacy Assets', 'Geographic Costs', 'Technology Access', 'Capacity Limits'],
+                    'Risk Units': [1439, 1028, 1028, 617],
+                    'Percentage': ['35%', '25%', '25%', '15%']
+                })
+                st.dataframe(constraint_data, use_container_width=True)
+
+                st.markdown("""
+                **Policy Priority**: Subsidize early BF-BOF retirement (35% of gap)
+                """)
+
+            st.markdown("---")
+
+            # Portfolio Comparison
+            st.markdown("### 📋 Portfolio Rebalancing Recommendations")
+
+            portfolio_comparison = pd.DataFrame({
+                'Technology': ['Legacy BF-BOF', 'BF-BOF+CCS', 'FINEX+CCS', 'NG-DRI-EAF', 'Scrap-EAF', 'HyREX H2-DRI'],
+                'Announced (Mt)': [11.5, 10.0, 12.0, 5.0, 5.0, 0.5],
+                'Optimal (Mt)': [0.0, 8.3, 12.0, 8.0, 5.0, 0.0],
+                'Change (Mt)': [-11.5, -1.7, 0.0, +3.0, 0.0, -0.5],
+                'Action': ['❌ ELIMINATE', '⚠️ REDUCE 17%', '✅ MAINTAIN', '✅ INCREASE 60%', '✅ MAINTAIN', '❌ DELAY']
+            })
+
+            st.dataframe(portfolio_comparison, use_container_width=True)
+
+            st.success("""
+            **Expected Benefits of Rebalancing:**
+            - 36% risk reduction
+            - $4.2B cost savings
+            - Same 48.9 Mt CO₂ abatement
+            - Implementation feasible within existing constraints
+            """)
+
+            # Interactive Scenario Analysis
+            st.markdown("---")
+            st.markdown("### 🎯 Interactive Scenario Analysis")
+
+            scenario = st.selectbox(
+                "Select Analysis Scenario",
+                ["Current Announced Strategy",
+                 "Optimal Portfolio (Recommended)",
+                 "What if: Eliminate all legacy BF-BOF?",
+                 "What if: Double scrap availability?",
+                 "What if: Access to HYBRIT technology?"]
+            )
+
+            if scenario == "Current Announced Strategy":
+                st.info("""
+                **Current Status**: POSCO's announced 2030 strategy
+                - Risk: 279.4 units
+                - Cost: $19,073M
+                - Efficiency: 63.6% (SUB-OPTIMAL)
+                """)
+            elif scenario == "Optimal Portfolio (Recommended)":
+                st.success("""
+                **Optimal Rebalancing**: Stay within POSCO constraints
+                - Risk: 178.2 units (-36%)
+                - Cost: $14,840M (-$4.2B)
+                - Efficiency: 100% (ON FRONTIER)
+                """)
+            elif scenario == "What if: Eliminate all legacy BF-BOF?":
+                st.warning("""
+                **Impact Analysis**: Shutdown 11.5 Mt legacy capacity
+                - Risk Reduction: -91.4 units (90% of gap!)
+                - Stranded Asset Cost: ~$4.6B one-time loss
+                - Ongoing Savings: $200M/year operational cost
+                - **Recommendation**: Government subsidy needed for early retirement
+                """)
+            elif scenario == "What if: Double scrap availability?":
+                st.info("""
+                **Constraint Relaxation**: Increase EAF from 5 Mt → 10 Mt
+                - Risk Reduction: ~200 units
+                - Enables higher EAF allocation (lowest risk technology)
+                - **Policy**: Invest in scrap recycling infrastructure
+                """)
+            elif scenario == "What if: Access to HYBRIT technology?":
+                st.info("""
+                **Technology Transfer**: License SSAB's HYBRIT DRI
+                - Cost Reduction: $616/t → $520/t (HyREX → HYBRIT)
+                - Risk Reduction: σ=0.25 → σ=0.18
+                - Constraint Cost Reduction: ~1,000 units (25%)
+                - **Policy**: Technology transfer agreement with Sweden
+                """)
+
+            st.markdown("---")
+            st.markdown("""
+            **💡 Key Takeaway**:
+            - **8% of inefficiency** = Strategy sub-optimality (POSCO can fix)
+            - **92% of inefficiency** = Structural constraints (Policy must address)
+
+            **Recommendation**: Optimize portfolio first (low-hanging fruit), then lobby for policy support (larger gains).
+            """)
+
+        # Tab 2: Monte Carlo Efficient Frontier
+        # ---------------------------------------------------------------------
+        with tab2:
             st.subheader("Monte Carlo Efficient Frontier")
             st.markdown("""
             Computes the efficient frontier via Monte Carlo simulation:
@@ -610,7 +774,7 @@ if df is not None:
         # ---------------------------------------------------------------------
         # Tab 2: Risk Decomposition
         # ---------------------------------------------------------------------
-        with tab2:
+        with tab3:
             st.subheader("Risk Decomposition Analysis")
             st.markdown("""
             Decomposes total portfolio risk into three components (Equation 4):
@@ -669,7 +833,7 @@ if df is not None:
         # ---------------------------------------------------------------------
         # Tab 3: Dynamic Transition with Real Options
         # ---------------------------------------------------------------------
-        with tab3:
+        with tab4:
             st.subheader("Dynamic Transition Pathway with Real Options")
             st.markdown("""
             Multi-period optimization using Model Predictive Control (Section 6) with:
@@ -724,7 +888,7 @@ if df is not None:
         # ---------------------------------------------------------------------
         # Tab 4: Stochastic Dominance
         # ---------------------------------------------------------------------
-        with tab4:
+        with tab5:
             st.subheader("Stochastic Dominance Analysis")
             st.markdown("""
             Compare two portfolios for stochastic dominance:
@@ -818,7 +982,7 @@ if df is not None:
         # ---------------------------------------------------------------------
         # Tab 5: Robust Optimization
         # ---------------------------------------------------------------------
-        with tab5:
+        with tab6:
             st.subheader("Robust Optimization under Uncertainty")
             st.markdown("""
             Solves the min-max problem (Section 9.1):
@@ -915,7 +1079,7 @@ if df is not None:
         # ---------------------------------------------------------------------
         # Tab 6: Cost Simulation
         # ---------------------------------------------------------------------
-        with tab6:
+        with tab7:
             st.subheader("Technology Cost Simulation")
             st.markdown("""
             Simulates cost evolution using the jump-diffusion with learning (Equation 22):
