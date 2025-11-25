@@ -864,7 +864,14 @@ This creates portfolio concentration risk if POSCO over-invests in hydrogen-depe
 
 \subsection{Optimization Results}
 
-Solving the constrained optimization problem yields the efficient frontier shown in Figure X. Key insights:
+Solving the constrained optimization problem yields the efficient frontier shown in Figure \ref{fig:posco_frontier}. Key insights:
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{figure1_posco_frontier.pdf}
+\caption{POSCO Technology Portfolio Efficient Frontier. The frontier shows the risk-abatement trade-off for different portfolio compositions. The red star indicates the optimal portfolio for achieving 50 Mt abatement target (approximately 70\% reduction from baseline).}
+\label{fig:posco_frontier}
+\end{figure}
 
 \paragraph{Optimal Base-Case Portfolio (50\% reduction target)}
 \begin{table}[H]
@@ -885,7 +892,7 @@ HyREX H$_2$-DRI & 0.20 & 8.0 & 15.7 & 4.9 \\
 \end{table}
 
 \paragraph{Interpretation}
-The optimal portfolio diversifies across risk profiles:
+The optimal portfolio diversifies across risk profiles (Figure \ref{fig:optimal_portfolio}):
 \begin{itemize}
     \item \textbf{Scrap-EAF dominance (42\%)}: Low-risk, proven technology serves as portfolio anchor. This aligns with POSCO's actual \$140M scrap infrastructure investment and 2.5 Mt EAF expansion at Gwangyang.
 
@@ -893,6 +900,13 @@ The optimal portfolio diversifies across risk profiles:
 
     \item \textbf{Hydrogen hedge (34\% combined)}: NG-DRI-EAF (14\%) + HyREX (20\%) balances learning curve benefits against cost uncertainty. The 20\% HyREX allocation captures first-mover advantage while limiting downside risk.
 \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figure2_optimal_portfolio.pdf}
+\caption{Optimal Portfolio Composition for 50 Mt Abatement Target. Panel (a) shows the technology mix by portfolio weight. Panel (b) shows the abatement contribution of each technology. The portfolio balances risk through diversification across mature (EAF), bridge (FINEX+CCS), and emerging (H$_2$-DRI) technologies.}
+\label{fig:optimal_portfolio}
+\end{figure}
 
 \subsection{Sensitivity Analysis}
 
@@ -914,7 +928,14 @@ H$_2$ Price (\$/kg) & HyREX Weight & EAF Weight & Total Risk \\
 \end{tabular}
 \end{table}
 
-At \$1.50/kg H$_2$ (projected 2030 in favorable regions), HyREX becomes the dominant technology (48\% weight), validating POSCO's strategic bet on hydrogen while hedging with EAF expansion today.
+At \$1.50/kg H$_2$ (projected 2030 in favorable regions), HyREX becomes the dominant technology (48\% weight), validating POSCO's strategic bet on hydrogen while hedging with EAF expansion today (Figure \ref{fig:h2_sensitivity}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figure3_h2_sensitivity.pdf}
+\caption{Hydrogen Price Sensitivity Analysis. Panel (a) shows green steel cost parity with conventional BF-BOF under different hydrogen prices and carbon pricing scenarios. Panel (b) shows how optimal technology allocation shifts as hydrogen costs decline. At \$1.50/kg H$_2$, HyREX becomes the dominant technology.}
+\label{fig:h2_sensitivity}
+\end{figure}
 
 \paragraph{Government Subsidy Impact}
 Increasing Korea's subsidy allocation from KRW 268.5B (\$198M) to match Germany's per-ton funding (\$7.5B for 26 Mt = \$288/t) would reduce HyREX volatility from $\sigma = 0.25$ to $\sigma \approx 0.18$, shifting optimal allocation:
@@ -955,7 +976,14 @@ Period & Dominant Technology & Abatement & Rationale \\
 \end{tabular}
 \end{table}
 
-The irreversibility constraint $\bm{w}_t \geq \bm{w}_{t-1}$ prevents premature HyREX investment before hydrogen costs decline, while maintaining learning curve benefits through modest early allocation.
+The irreversibility constraint $\bm{w}_t \geq \bm{w}_{t-1}$ prevents premature HyREX investment before hydrogen costs decline, while maintaining learning curve benefits through modest early allocation (Figure \ref{fig:transition_pathway}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figure4_transition_pathway.pdf}
+\caption{POSCO Dynamic Technology Transition Pathway (2025-2050). The stacked area chart shows the evolution of installed capacity over four periods. The pathway emphasizes low-risk EAF expansion initially, transitions through CCUS and NG-DRI bridge technologies, and scales HyREX as hydrogen costs decline. Cumulative abatement targets are shown for each period.}
+\label{fig:transition_pathway}
+\end{figure}
 
 \subsection{Comparison with Announced Strategy}
 
