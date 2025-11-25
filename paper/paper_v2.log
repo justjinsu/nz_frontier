@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  25 NOV 2025 11:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.5)  25 NOV 2025 12:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -541,20 +541,20 @@ Package natbib Warning: Citation `levi2020decarbonization' on page 15 undefined
  on input line 696.
 
 [15] [16] [17] [18] [19]
-<figure1_posco_frontier.pdf, id=750, 425.84807pt x 281.89752pt>
+<figure1_posco_frontier.pdf, id=782, 425.84807pt x 281.89752pt>
 File: figure1_posco_frontier.pdf Graphic file (type pdf)
 <use figure1_posco_frontier.pdf>
 Package pdftex.def Info: figure1_posco_frontier.pdf  used on input line 874.
 (pdftex.def)             Requested size: 328.82707pt x 217.67256pt.
  [20]
-<figure2_optimal_portfolio.pdf, id=764, 715.34378pt x 281.60205pt>
+<figure2_optimal_portfolio.pdf, id=796, 715.34378pt x 281.60205pt>
 File: figure2_optimal_portfolio.pdf Graphic file (type pdf)
 <use figure2_optimal_portfolio.pdf>
 Package pdftex.def Info: figure2_optimal_portfolio.pdf  used on input line 909.
 
 (pdftex.def)             Requested size: 469.75502pt x 184.92978pt.
  [21 <./figure1_posco_frontier.pdf>]
-<figure3_h2_sensitivity.pdf, id=829, 715.07655pt x 281.60205pt>
+<figure3_h2_sensitivity.pdf, id=862, 715.07655pt x 281.60205pt>
 File: figure3_h2_sensitivity.pdf Graphic file (type pdf)
 <use figure3_h2_sensitivity.pdf>
 Package pdftex.def Info: figure3_h2_sensitivity.pdf  used on input line 938.
@@ -565,95 +565,124 @@ Overfull \hbox (3.90453pt too wide) in paragraph at lines 970--980
  []
 
 [23 <./figure3_h2_sensitivity.pdf>]
-<figure4_transition_pathway.pdf, id=966, 568.00745pt x 318.03253pt>
+<figure4_transition_pathway.pdf, id=998, 568.00745pt x 318.03253pt>
 File: figure4_transition_pathway.pdf Graphic file (type pdf)
 <use figure4_transition_pathway.pdf>
 Package pdftex.def Info: figure4_transition_pathway.pdf  used on input line 986
 .
 (pdftex.def)             Requested size: 399.29463pt x 223.56754pt.
  [24 <./figure4_transition_pathway.pdf>]
+Overfull \hbox (36.72481pt too wide) in paragraph at lines 1018--1018
+[]\OT1/cmr/bx/n/17.28 Investment Ef-fi-ciency Anal-y-sis: Firm-Level vs Industr
+y-
+ []
+
 [25]
-Overfull \hbox (7.37706pt too wide) in paragraph at lines 1063--1064
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 1
+052.
+ (/usr/local/texlive/2023/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2022/07/10 v2.5l Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1052.
+
+ [26]
+<figure_three_tier_comparison.pdf, id=1084, 714.51555pt x 427.21518pt>
+File: figure_three_tier_comparison.pdf Graphic file (type pdf)
+<use figure_three_tier_comparison.pdf>
+Package pdftex.def Info: figure_three_tier_comparison.pdf  used on input line 1
+112.
+(pdftex.def)             Requested size: 399.29463pt x 238.74344pt.
+<figure_posco_diagnosis.pdf, id=1086, 1006.17238pt x 715.79132pt>
+File: figure_posco_diagnosis.pdf Graphic file (type pdf)
+<use figure_posco_diagnosis.pdf>
+Package pdftex.def Info: figure_posco_diagnosis.pdf  used on input line 1136.
+(pdftex.def)             Requested size: 469.75502pt x 334.18294pt.
+
+[27] [28 <./figure_three_tier_comparison.pdf>] [29 <./figure_posco_diagnosis.pd
+f>] [30]
+Overfull \hbox (7.37706pt too wide) in paragraph at lines 1231--1232
 \OT1/cmr/m/n/12 ir-re-versibil-ity, learn-ing, and deep un-cer-tainty. This pa-
 per pro-vides such a frame-work, grounded
  []
 
-[26]
-Underfull \hbox (badness 3471) in paragraph at lines 1103--1107
+[31]
+Underfull \hbox (badness 3471) in paragraph at lines 1271--1275
 []\OT1/cmr/m/n/12 Boston Con-sult-ing Group. (2024).  Short-falls in scrap will
  chal-lenge the steel
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1103--1107
+Underfull \hbox (badness 10000) in paragraph at lines 1271--1275
 \OT1/cmr/m/n/12 in-dus-try.  \OT1/cmr/m/it/12 BCG Pub-li-ca-tions\OT1/cmr/m/n/1
 2 . []$\OT1/cmtt/m/n/12 https : / / www . bcg . com / publications / 2024 /
  []
 
 
-Underfull \hbox (badness 2150) in paragraph at lines 1103--1107
+Underfull \hbox (badness 2150) in paragraph at lines 1271--1275
 \OT1/cmtt/m/n/12 shortfalls-[]in-[]scrap-[]will-[]challenge-[]steel-[]industry$
 []  \OT1/cmr/m/n/12 IEA/EET Work-ing Pa-
  []
 
-[27] [28]
-Underfull \hbox (badness 4467) in paragraph at lines 1299--1302
+[32] [33]
+Underfull \hbox (badness 4467) in paragraph at lines 1467--1470
 []\OT1/cmr/m/n/12 OECD. (2024).  Cir-cu-lar econ-omy poli-cies for steel de-car
 -bon-i-sa-tion.  \OT1/cmr/m/it/12 OECD
  []
 
 
-Underfull \hbox (badness 6944) in paragraph at lines 1299--1302
+Underfull \hbox (badness 6944) in paragraph at lines 1467--1470
 \OT1/cmr/m/it/12 En-vi-ron-ment Pol-icy Pa-pers\OT1/cmr/m/n/12 , No. 42. []$\OT
 1/cmtt/m/n/12 https : / / www . oecd . org / en / publications /
  []
 
-[29]
+[34]
 
 Package natbib Warning: There were undefined citations.
 
-[30] (./paper_v2.aux)
+[35] (./paper_v2.aux)
 
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `paper_v2.out' has not changed.
-(rerunfilecheck)             Checksum: 6DB611616B2BA6F8D5DA5DFFDC1638B3;10887.
+(rerunfilecheck)             Checksum: AC97A18E610E0B36135E8C8BFFB4294E;12819.
  ) 
 Here is how much of TeX's memory you used:
- 12202 strings out of 476025
- 192732 string characters out of 5790018
+ 12291 strings out of 476025
+ 194251 string characters out of 5790018
  1865388 words of memory out of 5000000
- 32179 multiletter control sequences out of 15000+600000
- 530235 words of font info for 97 fonts, out of 8000000 for 9000
+ 32221 multiletter control sequences out of 15000+600000
+ 530594 words of font info for 98 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,76p,1195b,669s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,15n,76p,1195b,657s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
-/usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
-usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></us
-r/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/
-local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/
-local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></
-usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></us
-r/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/
-local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/lo
-cal/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local
-/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/te
-xlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/tex
-live/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texli
-ve/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive
-/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/
-2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/20
-23/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/202
-3/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive
-/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/tex
-live/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texli
-ve/2023/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on paper_v2.pdf (30 pages, 470447 bytes).
+</usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb
+></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
+</usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><
+/usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></u
+sr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
+/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr
+/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><
+/usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
+sr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
+/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/l
+ocal/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loca
+l/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/t
+exlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texl
+ive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texliv
+e/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive
+/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/2
+023/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/20
+23/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texliv
+e/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/te
+xlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texl
+ive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on paper_v2.pdf (35 pages, 543222 bytes).
 PDF statistics:
- 1240 PDF objects out of 1440 (max. 8388607)
- 946 compressed objects within 10 object streams
- 304 named destinations out of 1000 (max. 500000)
- 445 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1476 PDF objects out of 1728 (max. 8388607)
+ 1049 compressed objects within 11 object streams
+ 345 named destinations out of 1000 (max. 500000)
+ 519 words of extra memory for PDF output out of 10000 (max. 10000000)
 
