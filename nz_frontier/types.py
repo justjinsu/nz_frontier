@@ -66,8 +66,20 @@ class RiskBreakdown:
 class FrontierPoint:
     """
     Represents one point on the efficient frontier.
+
+    New Framework:
+    - volatility: Cost volatility σ_P (uncertainty)
+    - expected_cost: Expected portfolio cost C_P
+    - abatement: Total abatement achieved
+
+    Legacy fields (for backward compatibility):
+    - risk: Old R_P measure (deprecated)
     """
-    risk: float
-    abatement: float
+    volatility: float  # σ_P: Cost volatility (2nd moment)
+    expected_cost: float  # C_P: Expected cost (1st moment)
+    abatement: float  # A_P: Total abatement
     portfolio: Portfolio
     breakdown: Optional[RiskBreakdown] = None
+
+    # Deprecated field (kept for backward compatibility)
+    risk: Optional[float] = None
